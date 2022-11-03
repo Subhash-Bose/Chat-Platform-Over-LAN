@@ -1,6 +1,13 @@
 from tkinter import *
 from tkinter.ttk import *
 from functools import partial
+import client
+
+def create_account(newuser,newpassword):
+    client.user=newuser.get()
+    client.pswd=newpassword.get()
+    client.request=0
+    client.signup_req()
 
 def signuping():
     signup= Tk()
@@ -15,9 +22,9 @@ def signuping():
     newpassword = StringVar() 
     passwordEntry = Entry(signup, textvariable=newpassword, show='*').place(x=680,y=220)   
     
-
+    create=partial(create_account,Newuser,newpassword)
 	#login button
-    loginButton = Button(signup, text="CREAT ACCOUNT").place(x=700,y=260) 
+    loginButton = Button(signup, text="CREAT ACCOUNT",command=create).place(x=700,y=260) 
 	
     btn2 = Button(signup, text = 'QUIT', command = signup.destroy)
     btn2.place(x=1200,y=300)  
