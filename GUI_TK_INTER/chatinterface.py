@@ -1,9 +1,13 @@
-from tkinter import *
-from functools import partial
 
+from tkinter import *
+from tkinter.ttk import *
+from functools import partial
+ 
+# Create Root Object
 
 
 tkWindow = Tk()  
+
 def validateLogin(username, password):
 	print("username entered :", username.get())
 	print("password entered :", password.get())
@@ -20,41 +24,39 @@ def validateLogin(username, password):
 			tkWindow2 = Tk()
 			tkWindow2.geometry('800x800')
 			tkWindow2.title('Tkinter Login Form - pythonexamples.org')
-			Label(tkWindow2,text="Invalid username or password",font=("Helvetica", "16") ).grid(row = 0 ,column = 0)
+			Label(tkWindow2,text="Invalid username or password",font=("Helvetica", "10") ).grid(row = 0 ,column = 0)
 			tkWindow2.mainloop()
 		   
-
-
-	    
-
-
-
-
-     
-
-
-	
-	
-	
-
 #window
+ 
+# Create style Object
+style = Style()
+ 
+style.configure('TButton', font =('calibri', 16, 'bold'), borderwidth = '4')
+ 
+# Changes will be reflected
+# by the movement of mouse.
+style.map('TButton', foreground = [('active', '!disabled', 'green')], background = [('active', 'black')])
+ 
 
 tkWindow.geometry('400x150')  
 tkWindow.title('Tkinter Login Form - pythonexamples.org')
 
 #username label and text entry box
 
-usernameLabel = Label(tkWindow, text="User Name",padx=20).place(x=680,y=120)  
+usernameLabel = Label(tkWindow, text="User Name").place(x=680,y=100)  
 username = StringVar()
-usernameEntry = Entry(tkWindow, textvariable=username).place(x=680,y=140)   
+usernameEntry = Entry(tkWindow, textvariable=username, width=20).place(x=680,y=140)   
 
 #password label and password entry box
-passwordLabel = Label(tkWindow,text="Password",padx=20 ).place(x=680,y=160)  
+passwordLabel = Label(tkWindow,text="Password").place(x=680,y=180)  
 password = StringVar() 
-passwordEntry = Entry(tkWindow, textvariable=password, show='*').place(x=680,y=180)   
+passwordEntry = Entry(tkWindow, textvariable=password, show='*').place(x=680,y=220)   
 
 validateLogin = partial(validateLogin, username, password)
 
 #login button
-loginButton = Button(tkWindow, text="Login", command=validateLogin).place(x=712,y=200)    
+loginButton = Button(tkWindow, text="Login", command=validateLogin).place(x=700,y=260) 
+btn2 = Button(tkWindow, text = 'QUIT', command = tkWindow.destroy)
+btn2.place(x=1200,y=300)  
 tkWindow.mainloop()
