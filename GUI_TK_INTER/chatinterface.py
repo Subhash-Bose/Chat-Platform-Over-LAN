@@ -53,11 +53,11 @@ def start_interface():
 	passwordLabel = Label(tkWindow,text="Password").place(x=680,y=180)  
 	password = StringVar() 
 	passwordEntry = Entry(tkWindow, textvariable=password, show='*').place(x=680,y=220)   
-
-	validateLogin = partial(validateLogin, username, password)
+	validate = partial(validateLogin, username, password)
 
 	#login button
-	loginButton = Button(tkWindow, text="Login", command=validateLogin).place(x=700,y=260) 
+	loginButton = Button(tkWindow, text="Login", command=validate).place(x=700,y=260) 
+	
 	btn2 = Button(tkWindow, text = 'QUIT', command = tkWindow.destroy)
 	btn2.place(x=1200,y=300)  
 	btn2 = Button(tkWindow, text = 'SIGNUP ', command =sign.signuping )
