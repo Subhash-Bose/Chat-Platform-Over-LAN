@@ -1,18 +1,19 @@
 from tkinter import *
 import regex as re
-def signup():
+returning_value=[]
+def Signup():
     def btn_clicked():
-        # canvas.itemconfig(6,state='hidden')
-        # strr=entry0.get()
-        if len(entry0.get())==0:
-            canvas.itemconfig(8,state='normal')
-        else:
-            canvas.itemconfig(8,state='hidden')
-
-        validateEmail(entry1.get())
-        validatePassword(entry2.get())
-        print(entry1.get())
-        print("Button Clicked")
+        # if len(entry0.get())==0:
+        #     canvas.itemconfig(8,state='normal')
+        #     return
+        # else:
+        #     canvas.itemconfig(8,state='hidden')
+            
+        if validateEmail(entry1.get()) and validatePassword(entry2.get()) or True:
+            global returning_value
+            returning_value=[getName(),getEmail(),getPassword()]
+            window.destroy()
+        
 
     def validateEmail(str):
         pattern=re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
@@ -118,7 +119,6 @@ def signup():
         highlightthickness = 0,
         command = btn_clicked,
         relief = "flat")
-
     b0.place(
         x = 453, y = 403,
         width = 228,
@@ -152,7 +152,6 @@ def signup():
         state='hidden')
 
     window.resizable(False, False)
-    print(entry0.get())
     window.mainloop()
+    return returning_value
 
-signup()
