@@ -3,7 +3,7 @@ import socket
 
 # import threading library
 import threading
-
+import openpyxl as xl
 # Choose a port that is free
 PORT = 5000
 while True:
@@ -50,35 +50,62 @@ while True:
 				# a new connection to the client
 				# and the address bound to it
 				conn, addr = server.accept()
-				conn.send("NAME".encode(FORMAT))
+				# conn.send("NAME".encode(FORMAT))
 
 				# 1024 represents the max amount
 				# of data that can be received (bytes)
 				name = conn.recv(1024).decode(FORMAT)
+				if name=="signup":
+					name = conn.recv(1024).decode(FORMAT)
+					signup_data=name.split(":")
+					print(signup_data)
+					try:
+						try:
+							wb=xl.load_workbook("backend\\login_data.xlsx")
+						except:
+							wb=xl.Workbook()
+							wb.save("backend\\login_data.xlsx")
+							wb=xl.load_workbook("backend\\login_data.xlsx")
+							
+						# signup_data=["sjhbd","asd@jk.lk","ahjdkhj"]
+						ws=wb.active
+						nth_row=ws.max_row+1
+						ws.cell(row=nth_row,column=1).value=signup_data[0]
+						print(signup_data[0]," has been written")
+						ws.cell(row=nth_row,column=2).value=signup_data[1]
+						print(signup_data[1]," has been written")
+						ws.cell(row=nth_row,column=3).value=signup_data[2]
+						print(signup_data[2]," has been written")
+						wb.save("backend\\login_data.xlsx")
+						print("data Created")
+					except:
+						print("cannot create data")
+					msg=conn.send(str("Signup created for "+signup_data[0].title()).encode(FORMAT))
 
-				# append the name and client
-				# to the respective list
-				names.append(name)
-				clients.append(conn)
 
-				print(f"Name is :{name}")
+		# 		# append the name and client
+		# 		# to the respective list
+		# 		names.append(name)
+		# 		clients.append(conn)
 
-				# broadcast message
-				broadcastMessage(f"{name} has joined the chat!".encode(FORMAT))
+		# 		print(f"Name is :{name}")
 
-				conn.send('Connection successful!'.encode(FORMAT))
+		# 		# broadcast message
+		# 		broadcastMessage(f"{name} has joined the chat!".encode(FORMAT))
 
-				# Start the handling thread
-				thread = threading.Thread(target=handle,
-										args=(conn, addr))
-				thread.start()
+		# 		conn.send('Connection successful!'.encode(FORMAT))
 
-				# no. of clients connected
-				# to the server
-				print(f"active connections {threading.activeCount()-1}")
+		# 		# Start the handling thread
+		# 		thread = threading.Thread(target=handle,
+		# 								args=(conn, addr))
+		# 		thread.start()
 
-		# method to handle the
-		# incoming messages
+		# 		# no. of clients connected
+		# 		# to the server
+		# 		print(f"active connections {threading.activeCount()-1}")
+
+		# # method to handle the
+		# # incoming messages
 
 
 		def handle(conn, addr):
