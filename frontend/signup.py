@@ -1,18 +1,19 @@
 from tkinter import *
 import regex as re
-def createSignup():
+returning_value=[]
+def Signup():
     def btn_clicked():
-        # canvas.itemconfig(6,state='hidden')
-        # strr=entry0.get()
         if len(entry0.get())==0:
             canvas.itemconfig(8,state='normal')
+            return
         else:
             canvas.itemconfig(8,state='hidden')
-
-        validateEmail(entry1.get())
-        validatePassword(entry2.get())
-        print(entry1.get())
-        print("Button Clicked")
+            
+        if validateEmail(entry1.get()) and validatePassword(entry2.get()):
+            global returning_value
+            returning_value=[getName(),getEmail(),getPassword()]
+            window.destroy()
+        
 
     def validateEmail(str):
         pattern=re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
@@ -59,12 +60,12 @@ def createSignup():
         relief = "ridge")
     canvas.place(x = 0, y = 0)
 
-    background_img = PhotoImage(file = f"background.png")
+    background_img = PhotoImage(file = f"frontend\\signup\\background.png")
     background = canvas.create_image(
         502.0, 294.0,
         image=background_img)
 
-    entry0_img = PhotoImage(file = f"img_textBox0.png")
+    entry0_img = PhotoImage(file = f"frontend\\signup\\img_textBox0.png")
     entry0_bg = canvas.create_image(
         559.5, 193.5,
         image = entry0_img)
@@ -79,7 +80,7 @@ def createSignup():
         width = 385.0,
         height = 43)
 
-    entry1_img = PhotoImage(file = f"img_textBox0.png")
+    entry1_img = PhotoImage(file = f"frontend\\signup\\img_textBox0.png")
     entry1_bg = canvas.create_image(
         559.5, 263.5,
         image = entry1_img)
@@ -94,7 +95,7 @@ def createSignup():
         width = 385.0,
         height = 43)
 
-    entry2_img = PhotoImage(file = f"img_textBox0.png")
+    entry2_img = PhotoImage(file = f"frontend\\signup\\img_textBox0.png")
     entry2_bg = canvas.create_image(
         566.5, 333.5,
         image = entry2_img)
@@ -111,14 +112,13 @@ def createSignup():
         width = 385.0,
         height = 43)
 
-    img0 = PhotoImage(file = f"img0.png")
+    img0 = PhotoImage(file = f"frontend\\signup\\img0.png")
     b0 = Button(
         image = img0,
         borderwidth = 0,
         highlightthickness = 0,
         command = btn_clicked,
         relief = "flat")
-
     b0.place(
         x = 453, y = 403,
         width = 228,
@@ -152,5 +152,6 @@ def createSignup():
         state='hidden')
 
     window.resizable(False, False)
-    print(entry0.get())
     window.mainloop()
+    return returning_value
+
