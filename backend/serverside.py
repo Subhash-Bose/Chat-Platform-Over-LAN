@@ -160,6 +160,11 @@ while True:
 							if id.value==userid:
 								print(nm.value,"Connected with ip address",addr)
 								msg=conn.send(str("success"+str(nm.value)).encode(FORMAT))
+								names.append(nm.value)
+								chat_msg="client#"+nm.value
+								for client in clients:
+									client.send(chat_msg.encode(FORMAT))
+								
 								handle(conn,addr)
 								return
 						else:
@@ -224,19 +229,6 @@ while True:
 		# method for broadcasting
 		# messages to the each clients
 
-		def sendMsg(conn,addr):
-			global chat_msg
-			while True:
-				try:
-					if chat_msg!="":
-						print("Sending msg")
-						for client in clients:
-							client.send(chat_msg.encode(FORMAT))
-						print("Sent msg is:",chat_msg)
-					chat_msg=""
-				except:
-					pass
-
 		def recvMsg(conn,addr):
 			# global chat_msg
 			while True:
@@ -244,6 +236,9 @@ while True:
 					# conn.recv(chat_msg.decode(FORMAT))
 					print("Waiting for message...")
 					chat_msg=conn.recv(1024).decode(FORMAT)
+					print("recieved msg length=",len(chat_msg))
+					if chat_msg=="exit":
+						return
 					for client in clients:
 						client.send(chat_msg.encode(FORMAT))
 					print("Sent msg is:",chat_msg)

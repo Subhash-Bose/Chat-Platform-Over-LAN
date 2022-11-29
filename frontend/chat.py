@@ -1,19 +1,23 @@
+import sys
 import threading
+import time
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo
 FORMAT = "utf-8"
+flag=1
 def chat(client,name):
     def recvMsg(client):
         # global chat_msg
-        while True:
+        while True and flag:
             try:
                 # client.recv(chat_msg.decode(FORMAT))
                 print("waiting for msg")
                 chat_msg=client.recv(1024).decode(FORMAT)
                 if chat_msg[:3]=="msg":
+                    entry1.delete(0,END)
                     msg_decode=chat_msg.split("#")
                     recieved_name=msg_decode[1]
                     recieved_msg=msg_decode[2]
@@ -25,12 +29,27 @@ def chat(client,name):
                         
                     textCons.config(state=DISABLED)
                     textCons.see(END)
+                if chat_msg[:chat_msg.find("#")]=="client" and chat_msg[chat_msg.find("#"):]!=name:
+                    print(chat_msg[chat_msg.find("#"):],"Joined the chat")
+                    showinfo(
+                        title='New member joined',
+                        message=chat_msg[chat_msg.find("#"):]+" Joined the Chat"
+                    )
+            
             except:
                 pass
+    def typing(msg):
+        typer=msg[msg.find("#"):]
+
+        pass
     recv_thread=threading.Thread(target=recvMsg,args=(client,))
     recv_thread.start()
+
     def btn_clicked():
         window.destroy()
+        global flag
+        flag=0
+        client.send("exit".encode(FORMAT))
         print("Button Clicked")
 
 
@@ -194,7 +213,7 @@ def chat(client,name):
     textCons = Text(window,
                                 width=18,
                                 height=2,
-                                bg="white",
+                                bg="#12de22",
                                 fg="black",
                                 font="Helvetica 10",
                                 padx=5,
@@ -212,8 +231,25 @@ def chat(client,name):
             # into the gui window
     scrollbar.place(relheight=1,
                             relx=0.974)
+    # def threadTyping(client):
+    #     print("typing initiated")
+    #     prevlen=0
+    #     while True and flag:
+    #         # print("Entry is",entry0.get())
+    #         currlen=len(entry0.get())
+    #         if prevlen!=currlen:
+    #             print(name ,"is typing")
+    #             # client.send("type#"+name.encode(FORMAT))
+    #             prevlen=currlen
+    #         time.sleep(0.7)
+    # thread_typing=threading.Thread(target=threadTyping,args=(client,))
+    # thread_typing.start()
 
     scrollbar.config(command=textCons.yview)
     textCons.config(state=DISABLED)
     window.resizable(False, False)
     window.mainloop()
+    global flag
+    flag=0
+    client.send("exit".encode(FORMAT))
+    # sys.exit()
