@@ -1,6 +1,14 @@
 # import socket library
+import math
+import random
 import socket
-
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
+import ssl
+import time
 # import threading library
 import threading
 import openpyxl as xl
@@ -52,35 +60,19 @@ while True:
 				conn, addr = server.accept()
 				# conn.send("NAME".encode(FORMAT))
 
+				# while True:
+				# 	msg conn.recv(1024).decode(FORMAT)
+				# login_thread = threading.Thread(target=login,args=(conn, addr))
+				print("new connection from ",addr[0])
+				# login_thread.start()
+				try:
+					handle_thread = threading.Thread(target=handle1,args=(conn, addr))
+					handle_thread.start()
+				except:
+					pass
 				# 1024 represents the max amount
 				# of data that can be received (bytes)
-				name = conn.recv(1024).decode(FORMAT)
-				if name=="signup":
-					name = conn.recv(1024).decode(FORMAT)
-					signup_data=name.split(":")
-					print(signup_data)
-					try:
-						try:
-							wb=xl.load_workbook("backend\\login_data.xlsx")
-						except:
-							wb=xl.Workbook()
-							wb.save("backend\\login_data.xlsx")
-							wb=xl.load_workbook("backend\\login_data.xlsx")
-							
-						# signup_data=["sjhbd","asd@jk.lk","ahjdkhj"]
-						ws=wb.active
-						nth_row=ws.max_row+1
-						ws.cell(row=nth_row,column=1).value=signup_data[0]
-						print(signup_data[0]," has been written")
-						ws.cell(row=nth_row,column=2).value=signup_data[1]
-						print(signup_data[1]," has been written")
-						ws.cell(row=nth_row,column=3).value=signup_data[2]
-						print(signup_data[2]," has been written")
-						wb.save("backend\\login_data.xlsx")
-						print("data Created")
-					except:
-						print("cannot create data")
-					msg=conn.send(str("Signup created for "+signup_data[0].title()).encode(FORMAT))
+				
 
 
 		# 		# append the name and client
@@ -107,6 +99,160 @@ while True:
 		# # method to handle the
 		# # incoming messages
 
+		def login(conn,addr):
+			name = conn.recv(1024).decode(FORMAT)
+			if name=="signup":
+				name = conn.recv(1024).decode(FORMAT)
+				signup_data=name.split(":")
+				# print(signup_data)
+				try:
+					try:
+						wb=xl.load_workbook("backend\\login_data.xlsx")
+					except:
+						wb=xl.Workbook()
+						wb.save("backend\\login_data.xlsx")
+						wb=xl.load_workbook("backend\\login_data.xlsx")
+						
+					# signup_data=["sjhbd","asd@jk.lk","ahjdkhj"]
+					ws=wb.active
+					nth_row=ws.max_row+1
+					ws.cell(row=nth_row,column=1).value=signup_data[0]
+					print(signup_data[0]," has been written")
+					ws.cell(row=nth_row,column=2).value=signup_data[1].lower()+"#"+signup_data[2]
+					print(signup_data[1]," has been written")
+					# ws.cell(row=nth_row,column=3).value=signup_data[2]
+					# print(signup_data[2]," has been written")
+					wb.save("backend\\login_data.xlsx")
+					print("data Created")
+				except:
+					print("cannot create data")
+				msg=conn.send(str("Signup created for "+signup_data[0].title()).encode(FORMAT))
+			
+			if name=="login":
+				name = conn.recv(1024).decode(FORMAT)
+				login_data=name.split(":")
+				userid=login_data[0]+"#"+login_data[1]
+				wb=xl.load_workbook("backend\\login_data.xlsx")
+				ws=wb.active
+				found=0
+				for nm,id in zip(ws["A"],ws["B"]):
+					if id.value==userid:
+						print(nm.value,"Connected with ip address",addr)
+						msg=conn.send("success".encode(FORMAT))
+				else:
+					msg=conn.send("failed".encode(FORMAT))
+		otp=0
+		def handle1(conn,addr):
+			global otp
+			while True:
+				try:
+					msg=""
+					try:
+						msg=conn.recv(1024).decode(FORMAT)
+					except:
+						print("error occured in receiving login type msg")
+						return
+					if msg=="signup":
+						try:
+							msg = conn.recv(1024).decode(FORMAT)
+						except:
+							print("Error occured in receiving signup_data")
+						print("signup request recieved for ",msg)
+
+						signup_data=msg.split(":")
+						print(signup_data)
+						try:
+							try:
+								wb=xl.load_workbook("backend\\login_data.xlsx")
+							except:
+								print("backend login_data file not exist, creating...")
+								wb=xl.Workbook()
+								wb.save("backend\\login_data.xlsx")
+								wb=xl.load_workbook("backend\\login_data.xlsx")
+								print("...created")
+								
+							# signup_data=["sjhbd","asd@jk.lk","ahjdkhj"]
+							ws=wb.active
+							nth_row=ws.max_row+1
+							ws.cell(row=nth_row,column=1).value=signup_data[0].title()
+							print(signup_data[0]," has been written")
+							ws.cell(row=nth_row,column=2).value=signup_data[1].lower()+"#"+signup_data[2]
+							print(signup_data[1].lower()+"#"+signup_data[2]," has been written")
+							wb.save("backend\\login_data.xlsx")
+							print("data Created")
+						except:
+							print("cannot create data")
+						conn.send(str("Signup created for "+signup_data[0].title()).encode(FORMAT))
+
+					if msg=="login":
+						msg = conn.recv(1024).decode(FORMAT)
+						login_data=msg.split(":")
+
+						userid=login_data[0]+"#"+login_data[1]
+						try:
+							wb=xl.load_workbook("backend\\login_data.xlsx")
+						except:
+							msg=conn.send("failed".encode(FORMAT))
+							return
+
+						ws=wb.active
+						found=0
+						for nm,id in zip(ws["A"],ws["B"]):
+							if id.value==userid:
+								print(nm.value,"Connected with ip address",addr)
+								msg=conn.send("success".encode(FORMAT))
+								return
+						else:
+							msg=conn.send("failed".encode(FORMAT))
+					
+					if msg=="reset":
+						msg = conn.recv(1024).decode(FORMAT)
+						email=msg
+						print("Reset request recieved from", email)
+						otp=send_email(email)
+						print("Generated OTP is",otp)
+						
+					if msg=="requestotp":
+						msg=conn.recv(1024).decode(FORMAT)
+						print("Recieved mail and otp is",msg)
+						msg=msg.split("#")
+						recieved_otp=msg[0]
+						email=msg[1]
+						print("Recieved OTP is",recieved_otp,"from",email)
+						print("types are ",type(recieved_otp),recieved_otp,type(otp),otp)
+						if(str(recieved_otp)==str(otp)):
+							try:
+								wb=xl.load_workbook("backend\\login_data.xlsx")
+							except:
+								msg="Email "+email+" Not found"
+								msg=conn.send(msg.encode(FORMAT))
+								return
+							print("database loaded")
+							ws=wb.active
+							for nm,id in zip(ws["A"],ws["B"]):
+								pattern=id.value
+								print("str Pattern",pattern)
+								if not pattern:
+									continue
+								pattern=pattern.split("#")
+								print("list Pattern",pattern)
+								email_1=pattern[0]
+								password=pattern[1]
+								if email_1==email:
+									print("Email found in database")
+									msg="Name: "+str(nm.value).title()+"\nEmail id: "+email+"\nPassword: "+password
+									msg=conn.send(msg.encode(FORMAT))
+									break
+							else:
+								msg="Email "+email+" Not found"
+								msg=conn.send(msg.encode(FORMAT))
+						else:
+							msg="invalidotp"
+							msg=conn.send(msg.encode(FORMAT))
+
+				except:
+					print("Error in handling authentication")
+
 
 		def handle(conn, addr):
 
@@ -130,6 +276,38 @@ while True:
 		def broadcastMessage(message):
 			for client in clients:
 				client.send(message)
+
+		def send_email(email):
+			otp=random.randint(100000,999999)   
+			# email="coolbose7@gmail.com"                                                                
+			try:
+				# Creating email
+				subject = "Reset Password Requested"                                         
+				body = "Your OTP to reset password is "+str(otp)
+				sender_email = "coolbose7@gmail.com" 
+				receiver_email = email
+				pswd = "bjxjaihjhxljnmcy"
+
+				# Create a multipart message and set headers
+				msg=MIMEMultipart()                                                       
+				msg["From"] = sender_email
+				msg["To"] = receiver_email
+				msg["Subject"] = subject
+
+				# Add body to email
+				msg.attach(MIMEText(body, "plain"))
+				# convert message to string
+				text = msg.as_string()
+
+				# Log in to server using secure context and send email
+				context = ssl.create_default_context()
+				with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+					server.login(sender_email, pswd)
+					server.sendmail(sender_email, receiver_email, text)
+			except:
+				print("Error in sending OTP")
+			print("Email sent to ",email)
+			return otp
 
 
 		# call the method to

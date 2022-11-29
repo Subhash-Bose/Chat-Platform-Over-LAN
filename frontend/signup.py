@@ -1,8 +1,11 @@
 from tkinter import *
 import regex as re
-returning_value=["","",""]
+returning_value=["exit"]
 response=0
 def signup():
+    global response
+    response=0
+    # returning_value=["exit"]
     def btn_signup():
         
         # canvas.itemconfig(5,state='normal')
@@ -22,6 +25,7 @@ def signup():
     def btn_exit():
         global response
         global returning_value
+        returning_value=['exit']
         response=1
         window.destroy()
     
@@ -29,6 +33,7 @@ def signup():
         global response
         global returning_value
         response=1
+        print("login ccc")
         returning_value=["","","login"]
         window.destroy()
 
@@ -94,7 +99,7 @@ def signup():
     entry0 = Entry(
         bd = 0,
         bg = "#eeecec",
-        highlightthickness = 0)
+        highlightthickness = 0,font=('Ubuntu 16'))
 
     entry0.place(
         x = 367.0, y = 171,
@@ -110,7 +115,7 @@ def signup():
     entry2 = Entry(
         bd = 0,
         bg = "#eeecec",
-        highlightthickness = 0)
+        highlightthickness = 0,font=('Ubuntu 16'))
 
     entry2.place(
         x = 367.0, y = 241,
@@ -125,7 +130,7 @@ def signup():
     entry3 = Entry(
         bd = 0,
         bg = "#eeecec",
-        highlightthickness = 0,show="*")
+        highlightthickness = 0,show="\u25CF",font=('Ubuntu 16'))
 
     entry3.place(
         x = 374.0, y = 311,
@@ -202,4 +207,6 @@ def signup():
     window.resizable(False, False)
 
     window.mainloop()
+    if response==0:
+        return ["exit"]
     return returning_value

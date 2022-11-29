@@ -2,22 +2,33 @@ import imghdr
 from tkinter import *
 from PIL import ImageTk, Image
 response=['','']
+ext=0
 def login():
+    global ext
+    ext=0
     def btn_login():
         global response
-        print("Button Clicked")
-        print(getEmail())
-        print(getPassword())
+        print("Login button clicked")
+        # print(getEmail())
+        # print(getPassword())
         response=[getEmail(),getPassword()]
-        window.destroy()
+        if len(getEmail())+len(getPassword()):
+            global ext
+            ext=1
+            window.destroy()
 
     def btn_signup():
         global response
+        global ext
+        ext=1
         response=["","signup"]
+        print("Signup button clicked")
         window.destroy()
     
     def btn_forgot():
         global response
+        global ext
+        ext=1
         response=["","forgot"]
         window.destroy()
 
@@ -52,7 +63,7 @@ def login():
     entry1 = Entry(
         bd = 0,
         bg = "#eeecec",
-        highlightthickness = 0)
+        highlightthickness = 0,font=('Ubuntu 16'))
     entry1.focus_set()
 
     entry1.place(
@@ -69,7 +80,7 @@ def login():
         bd = 0,
         bg = "#eeecec",
         highlightthickness = 0,
-        show="*")
+        show="\u25CF",font=('Ubuntu 16'))
 
     entry2.place(
         x = 373.0, y = 262,
@@ -117,13 +128,20 @@ def login():
 
     window.resizable(False, False)
     window.mainloop()
+    if ext==0:
+        return ["exit"]
     return response
 
 
-def w_btn():
-    print("Button Clicked")
-
+w_response=0
 def wrong():
+    global w_response
+    w_response=0
+    def w_btn():
+        global w_response
+        w_response=1
+        window1.destroy()
+        print("Button Clicked")
     window1 = Tk()
 
     window1.geometry("600x360")
@@ -158,5 +176,6 @@ def wrong():
 
     window1.resizable(False, False)
     window1.mainloop()
+    return w_response
 
 # login()

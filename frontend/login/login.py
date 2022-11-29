@@ -69,12 +69,6 @@ entry2.place(
     width = 385.0,
     height = 43)
 
-canvas.create_text(
-    447.0, 460.5,
-    text = "Forgot Password?",
-    fill = "#3b2e5f",
-    font = ("Chivo-Regular", int(22.0)))
-
 img0 = PhotoImage(file = f"img0.png")
 b0 = Button(
     image = img0,
@@ -84,7 +78,33 @@ b0 = Button(
     relief = "flat")
 
 b0.place(
-    x = 490, y = 359,
+    x = 346, y = 445,
+    width = 191,
+    height = 18)
+
+img1 = PhotoImage(file = f"img1.png")
+b1 = Button(
+    image = img1,
+    borderwidth = 0,
+    highlightthickness = 0,
+    command = btn_clicked,
+    relief = "flat")
+
+b1.place(
+    x = 582, y = 359,
+    width = 151,
+    height = 53)
+
+img2 = PhotoImage(file = f"img2.png")
+b2 = Button(
+    image = img2,
+    borderwidth = 0,
+    highlightthickness = 0,
+    command = btn_clicked,
+    relief = "flat")
+
+b2.place(
+    x = 397, y = 359,
     width = 151,
     height = 53)
 
