@@ -216,9 +216,9 @@ while True:
 
 		chat_msg=""
 		def handle(conn, addr):
-			send_thread= threading.Thread(target=sendMsg,args=(conn, addr))
+			# send_thread= threading.Thread(target=sendMsg,args=(conn, addr))
 			recv_thread= threading.Thread(target=recvMsg,args=(conn, addr))
-			send_thread.start()
+			# send_thread.start()
 			recv_thread.start()
 
 		# method for broadcasting
@@ -238,13 +238,16 @@ while True:
 					pass
 
 		def recvMsg(conn,addr):
-			global chat_msg
+			# global chat_msg
 			while True:
 				try:
 					# conn.recv(chat_msg.decode(FORMAT))
 					print("Waiting for message...")
 					chat_msg=conn.recv(1024).decode(FORMAT)
-					print("Recieved msg is:",chat_msg)
+					for client in clients:
+						client.send(chat_msg.encode(FORMAT))
+					print("Sent msg is:",chat_msg)
+					# print("Recieved msg is:",chat_msg)
 				except:
 					pass
 		def broadcastMessage(message):

@@ -19,9 +19,9 @@ def chat(client,name):
                     recieved_msg=msg_decode[2]
 
                     textCons.config(state=NORMAL)
-
+                    recieved_name=recieved_name[:recieved_name.find(" ")]
                     textCons.insert(END,
-                        "{} : {} \n\n".format(recieved_name,recieved_msg))
+                        "{:<15} : {} \n\n".format(recieved_name,recieved_msg))
                         
                     textCons.config(state=DISABLED)
                     textCons.see(END)
