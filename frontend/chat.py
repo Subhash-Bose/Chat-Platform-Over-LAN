@@ -9,12 +9,17 @@ from tkinter.messagebox import showinfo
 FORMAT = "utf-8"
 flag=1
 def chat(client,name,initiate):
+    global flag
+    print("client is ",client,name,flag)
 
     def recvMsg(client):
         global flag
         # global chat_msg
-        while True and flag:
+        while True:
             try:
+                if flag==0:
+                    print("recv closed")
+                    return
                 # client.recv(chat_msg.decode(FORMAT))
                 print("waiting for msg")
                 chat_msg=client.recv(1024).decode(FORMAT)
@@ -232,7 +237,10 @@ def chat(client,name,initiate):
     def threadTyping(client):
         print("typing initiated")
         prevlen=0
-        while True and flag:
+        while True:
+            if flag==0:
+                print("typing closed")
+                return
             # print("Entry is",entry0.get())
             currlen=len(entry0.get())
             if prevlen!=currlen:
@@ -254,10 +262,11 @@ def chat(client,name,initiate):
     textCons.config(state=DISABLED)
     window.resizable(False, False)
     window.mainloop()
+
     print("exitted")
-    global flag
+    # global flag
     flag=0
     client.send("exit".encode(FORMAT))
-    exit()
-    return
+    # exit()
+    return "exit"
     # sys.exit()

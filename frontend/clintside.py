@@ -276,7 +276,11 @@ def logginIn():
 		msg=client.recv(1024).decode(FORMAT)
 		if msg[:7]=="success":
 			print("success recieved")
-			chat(client,msg[7:],1)
+			resp=chat(client,msg[7:],1)
+			print("control is here")
+			client.close()
+			if resp=="exit":
+				return
 			# root = Tk()
 			# root.geometry("250x170")
 			# T = Text(root, height = 5, width = 52)

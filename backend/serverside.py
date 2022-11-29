@@ -110,111 +110,124 @@ while True:
 						msg=conn.recv(1024).decode(FORMAT)
 					except:
 						print("error occured in receiving login type msg")
-						return
-					if msg=="signup":
-						try:
-							msg = conn.recv(1024).decode(FORMAT)
-						except:
-							print("Error occured in receiving signup_data")
-						print("signup request recieved for ",msg)
-
-						signup_data=msg.split(":")
-						print(signup_data)
-						try:
+						# return
+						continue
+					print("recieved request is",msg)
+					try:
+						if msg=="signup":
 							try:
-								wb=xl.load_workbook("backend\\login_data.xlsx")
+								msg = conn.recv(1024).decode(FORMAT)
 							except:
-								print("backend login_data file not exist, creating...")
-								wb=xl.Workbook()
+								print("Error occured in receiving signup_data")
+							print("signup request recieved for ",msg)
+
+							signup_data=msg.split(":")
+							print(signup_data)
+							try:
+								try:
+									wb=xl.load_workbook("backend\\login_data.xlsx")
+								except:
+									print("backend login_data file not exist, creating...")
+									wb=xl.Workbook()
+									wb.save("backend\\login_data.xlsx")
+									wb=xl.load_workbook("backend\\login_data.xlsx")
+									print("...created")
+									
+								# signup_data=["sjhbd","asd@jk.lk","ahjdkhj"]
+								ws=wb.active
+								nth_row=ws.max_row+1
+								ws.cell(row=nth_row,column=1).value=signup_data[0].title()
+								print(signup_data[0]," has been written")
+								ws.cell(row=nth_row,column=2).value=signup_data[1].lower()+"#"+signup_data[2]
+								print(signup_data[1].lower()+"#"+signup_data[2]," has been written")
 								wb.save("backend\\login_data.xlsx")
-								wb=xl.load_workbook("backend\\login_data.xlsx")
-								print("...created")
-								
-							# signup_data=["sjhbd","asd@jk.lk","ahjdkhj"]
-							ws=wb.active
-							nth_row=ws.max_row+1
-							ws.cell(row=nth_row,column=1).value=signup_data[0].title()
-							print(signup_data[0]," has been written")
-							ws.cell(row=nth_row,column=2).value=signup_data[1].lower()+"#"+signup_data[2]
-							print(signup_data[1].lower()+"#"+signup_data[2]," has been written")
-							wb.save("backend\\login_data.xlsx")
-							print("data Created")
-						except:
-							print("cannot create data")
-						conn.send(str("Signup created for "+signup_data[0].title()).encode(FORMAT))
+								print("data Created")
+							except:
+								print("cannot create data")
+							conn.send(str("Signup created for "+signup_data[0].title()).encode(FORMAT))
+					except:
+						print("error in signup")
+					try:
+						if msg=="login":
+							msg = conn.recv(1024).decode(FORMAT)
+							login_data=msg.split(":")
 
-					if msg=="login":
-						msg = conn.recv(1024).decode(FORMAT)
-						login_data=msg.split(":")
-
-						userid=login_data[0]+"#"+login_data[1]
-						try:
-							wb=xl.load_workbook("backend\\login_data.xlsx")
-						except:
-							msg=conn.send("failed".encode(FORMAT))
-							return
-
-						ws=wb.active
-						found=0
-						for nm,id in zip(ws["A"],ws["B"]):
-							if id.value==userid:
-								print(nm.value,"Connected with ip address",addr)
-								msg=conn.send(str("success"+str(nm.value)).encode(FORMAT))
-								names.append(nm.value)
-								chat_msg="client#"+nm.value
-								for client in clients:
-									client.send(chat_msg.encode(FORMAT))
-								
-								handle(conn,addr)
-								return
-						else:
-							msg=conn.send("failed".encode(FORMAT))
-					
-					if msg=="reset":
-						msg = conn.recv(1024).decode(FORMAT)
-						email=msg
-						print("Reset request recieved from", email)
-						otp=send_email(email)
-						print("Generated OTP is",otp)
-						
-					if msg=="requestotp":
-						msg=conn.recv(1024).decode(FORMAT)
-						print("Recieved mail and otp is",msg)
-						msg=msg.split("#")
-						recieved_otp=msg[0]
-						email=msg[1]
-						print("Recieved OTP is",recieved_otp,"from",email)
-						print("types are ",type(recieved_otp),recieved_otp,type(otp),otp)
-						if(str(recieved_otp)==str(otp)):
+							userid=login_data[0]+"#"+login_data[1]
 							try:
 								wb=xl.load_workbook("backend\\login_data.xlsx")
 							except:
-								msg="Email "+email+" Not found"
-								msg=conn.send(msg.encode(FORMAT))
+								msg=conn.send("failed".encode(FORMAT))
 								return
-							print("database loaded")
-							ws=wb.active
-							for nm,id in zip(ws["A"],ws["B"]):
-								pattern=id.value
-								print("str Pattern",pattern)
-								if not pattern:
-									continue
-								pattern=pattern.split("#")
-								print("list Pattern",pattern)
-								email_1=pattern[0]
-								password=pattern[1]
-								if email_1==email:
-									print("Email found in database")
-									msg="Name: "+str(nm.value).title()+"\nEmail id: "+email+"\nPassword: "+password
-									msg=conn.send(msg.encode(FORMAT))
-									break
-							else:
-								msg="Email "+email+" Not found"
-								msg=conn.send(msg.encode(FORMAT))
-						else:
-							msg="invalidotp"
-							msg=conn.send(msg.encode(FORMAT))
 
+							ws=wb.active
+							found=0
+							for nm,id in zip(ws["A"],ws["B"]):
+								if id.value==userid:
+									print(nm.value,"Connected with ip address",addr)
+									msg=conn.send(str("success"+str(nm.value)).encode(FORMAT))
+									names.append(nm.value)
+									chat_msg="client#"+nm.value
+									for client in clients:
+										try:
+											client.send(chat_msg.encode(FORMAT))
+										except:
+											print("client Not found")
+									
+									handle(conn,addr)
+									return
+							else:
+								msg=conn.send("failed".encode(FORMAT))
+					except:
+						print("Error in logging in")
+					try:
+						if msg=="reset":
+							msg = conn.recv(1024).decode(FORMAT)
+							email=msg
+							print("Reset request recieved from", email)
+							otp=send_email(email)
+							print("Generated OTP is",otp)
+					except:
+						print("Error in reset")
+					try:
+						if msg=="requestotp":
+							msg=conn.recv(1024).decode(FORMAT)
+							print("Recieved mail and otp is",msg)
+							msg=msg.split("#")
+							recieved_otp=msg[0]
+							email=msg[1]
+							print("Recieved OTP is",recieved_otp,"from",email)
+							print("types are ",type(recieved_otp),recieved_otp,type(otp),otp)
+							if(str(recieved_otp)==str(otp)):
+								try:
+									wb=xl.load_workbook("backend\\login_data.xlsx")
+								except:
+									msg="Email "+email+" Not found"
+									msg=conn.send(msg.encode(FORMAT))
+									return
+								print("database loaded")
+								ws=wb.active
+								for nm,id in zip(ws["A"],ws["B"]):
+									pattern=id.value
+									print("str Pattern",pattern)
+									if not pattern:
+										continue
+									pattern=pattern.split("#")
+									print("list Pattern",pattern)
+									email_1=pattern[0]
+									password=pattern[1]
+									if email_1==email:
+										print("Email found in database")
+										msg="Name: "+str(nm.value).title()+"\nEmail id: "+email+"\nPassword: "+password
+										msg=conn.send(msg.encode(FORMAT))
+										break
+								else:
+									msg="Email "+email+" Not found"
+									msg=conn.send(msg.encode(FORMAT))
+							else:
+								msg="invalidotp"
+								msg=conn.send(msg.encode(FORMAT))
+					except:
+						print("error in requesting otp verification")
 				except:
 					print("Error in handling authentication")
 
@@ -238,9 +251,13 @@ while True:
 					chat_msg=conn.recv(1024).decode(FORMAT)
 					print("recieved msg length=",len(chat_msg))
 					if chat_msg=="exit":
+						conn.close()
 						return
 					for client in clients:
-						client.send(chat_msg.encode(FORMAT))
+						try:
+							client.send(chat_msg.encode(FORMAT))
+						except:
+							print("Message reciepent not found")
 					print("Sent msg is:",chat_msg)
 					# print("Recieved msg is:",chat_msg)
 				except:
