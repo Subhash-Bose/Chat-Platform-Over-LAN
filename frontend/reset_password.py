@@ -19,12 +19,12 @@ canvas = Canvas(
     relief = "ridge")
 canvas.place(x = 0, y = 0)
 
-background_img = PhotoImage(file = f"background.png")
+background_img = PhotoImage(file = f"frontend\\resetPassword\\background.png")
 background = canvas.create_image(
     502.0, 294.0,
     image=background_img)
 
-entry0_img = PhotoImage(file = f"img_textBox0.png")
+entry0_img = PhotoImage(file = f"frontend\\resetPassword\\img_textBox0.png")
 entry0_bg = canvas.create_image(
     558.5, 214.5,
     image = entry0_img)
@@ -39,7 +39,7 @@ entry0.place(
     width = 385.0,
     height = 43)
 
-entry1_img = PhotoImage(file = f"img_textBox1.png")
+entry1_img = PhotoImage(file = f"frontend\\resetPassword\\img_textBox1.png")
 entry1_bg = canvas.create_image(
     558.5, 214.5,
     image = entry1_img)
@@ -54,7 +54,7 @@ entry1.place(
     width = 385.0,
     height = 43)
 
-entry2_img = PhotoImage(file = f"img_textBox2.png")
+entry2_img = PhotoImage(file = f"frontend\\resetPassword\\img_textBox2.png")
 entry2_bg = canvas.create_image(
     466.0, 368.5,
     image = entry2_img)
@@ -69,7 +69,7 @@ entry2.place(
     width = 190.0,
     height = 43)
 
-img0 = PhotoImage(file = f"img0.png")
+img0 = PhotoImage(file = f"frontend\\resetPassword\\img0.png")
 b0 = Button(
     image = img0,
     borderwidth = 0,
@@ -82,7 +82,7 @@ b0.place(
     width = 151,
     height = 53)
 
-img1 = PhotoImage(file = f"img1.png")
+img1 = PhotoImage(file = f"frontend\\resetPassword\\img1.png")
 b1 = Button(
     image = img1,
     borderwidth = 0,
