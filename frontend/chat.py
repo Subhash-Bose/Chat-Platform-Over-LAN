@@ -1,3 +1,4 @@
+import os
 import sys
 import threading
 import time
@@ -141,13 +142,13 @@ def chat(client,name,initiate):
         print(filename)
 
 
-        import os
-        import socket
-        client =socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        PORT = 5000
-        SERVER = "172.16.181.29"
-        ADDRESS = (SERVER, PORT)
-        client.connect(ADDRESS)
+        # import os
+        # import socket
+        # client =socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        # PORT = 5000
+        # SERVER = "172.16.181.29"
+        # ADDRESS = (SERVER, PORT)
+        # client.connect(ADDRESS)
         file=open(filename,"rb")
         file_size=os.path.getsize(filename)
         typo=filename.split(".",1)
@@ -159,6 +160,9 @@ def chat(client,name,initiate):
 
         textCons.config(state=DISABLED)
         textCons.see(END)
+        client.send("attachment#".encode(FORMAT))
+
+        return
         client.send(("recived."+kk).encode())
         client.send(str(file_size).encode())
 

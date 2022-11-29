@@ -249,7 +249,10 @@ while True:
 					# conn.recv(chat_msg.decode(FORMAT))
 					print("Waiting for message...")
 					chat_msg=conn.recv(1024).decode(FORMAT)
-					print("recieved msg length=",len(chat_msg))
+					print("recieved msg length=",len(chat_msg),chat_msg)
+					if chat_msg[:chat_msg.find("#")]=="attachment":
+						print("chat request recieved")
+
 					if chat_msg=="exit":
 						conn.close()
 						return
