@@ -7,11 +7,11 @@ from tkinter import ttk
 from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo
 FORMAT = "utf-8"
+flag=1
 def chat(client,name,initiate):
-    global flag
-    flag=1
-    # flag=initiate
+
     def recvMsg(client):
+        global flag
         # global chat_msg
         while True and flag:
             try:
@@ -43,8 +43,8 @@ def chat(client,name,initiate):
             
             except:
                 pass
+        return 
 
-        pass
     recv_thread=threading.Thread(target=recvMsg,args=(client,))
     recv_thread.start()
 
@@ -54,6 +54,7 @@ def chat(client,name,initiate):
         flag=0
         client.send("exit".encode(FORMAT))
         print("Button Clicked")
+        return
 
 
     window = Tk()
@@ -101,16 +102,6 @@ def chat(client,name,initiate):
         client.send(msg_encode.encode(FORMAT))
 
         entry0.delete(0,END)
-        # textCons.config(state=NORMAL)
-        # # stri="{} : {} \n\n".format(name,k)
-        # textCons.insert(END,
-        #                 "{} : {} \n\n".format(name,k))
-
-        # textCons.config(state=DISABLED)
-        # textCons.see(END)
-
-
-
 
     img0 = PhotoImage(file = f"frontend\\chatWindow\\img0.png")
     b0 = Button(
@@ -119,6 +110,7 @@ def chat(client,name,initiate):
         highlightthickness = 0,
         command = lambda:getthemassage(),
         relief = "flat")
+
     print(entry0.get())
     b0.place(
         x = 811, y = 526,
@@ -262,6 +254,10 @@ def chat(client,name,initiate):
     textCons.config(state=DISABLED)
     window.resizable(False, False)
     window.mainloop()
+    print("exitted")
+    global flag
     flag=0
     client.send("exit".encode(FORMAT))
-    sys.exit()
+    exit()
+    return
+    # sys.exit()
