@@ -7,8 +7,10 @@ from tkinter import ttk
 from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo
 FORMAT = "utf-8"
-flag=1
-def chat(client,name):
+def chat(client,name,initiate):
+    global flag
+    flag=1
+    # flag=initiate
     def recvMsg(client):
         # global chat_msg
         while True and flag:
@@ -16,8 +18,9 @@ def chat(client,name):
                 # client.recv(chat_msg.decode(FORMAT))
                 print("waiting for msg")
                 chat_msg=client.recv(1024).decode(FORMAT)
+                print("recieved msg ",chat_msg)
                 if chat_msg[:3]=="msg":
-                    entry1.delete(0,END)
+                    # entry1.delete(0,END)
                     msg_decode=chat_msg.split("#")
                     recieved_name=msg_decode[1]
                     recieved_msg=msg_decode[2]
@@ -35,11 +38,11 @@ def chat(client,name):
                         title='New member joined',
                         message=chat_msg[chat_msg.find("#"):]+" Joined the Chat"
                     )
+                if(chat_msg[:chat_msg.find("#")])=="type":
+                    typing(chat_msg[chat_msg.find("#"):])
             
             except:
                 pass
-    def typing(msg):
-        typer=msg[msg.find("#"):]
 
         pass
     recv_thread=threading.Thread(target=recvMsg,args=(client,))
@@ -195,20 +198,23 @@ def chat(client,name):
         width = 92,
         height = 39)
 
-    entry1_img = PhotoImage(file = f"frontend\\chatWindow\\img_textBox1.png")
-    entry1_bg = canvas.create_image(
-        474.0, 74.5,
-        image = entry1_img)
+    # entry1_img = PhotoImage(file = f"frontend\\chatWindow\\img_textBox1.png")
+    # entry1_bg = canvas.create_image(
+    #     474.0, 74.5,
+    #     image = entry1_img)
 
-    entry1 = Entry(
-        bd = 0,
-        bg = "#d9d9d9",
-        highlightthickness = 0,font="Ubantu 15")
+    entry1 = Label(window,
+                        bg="white",
+                        fg="black",
+                        # take username from singup or singin
+                        text="",
+                        font="Helvetica 10 italic",
+                        pady=5)
 
     entry1.place(
-        x = 125, y = 45,
-        width = 698,
-        height = 57)
+        x = 80, y = 80,
+        width = 150,
+        height = 14)
 
     textCons = Text(window,
                                 width=18,
@@ -231,25 +237,31 @@ def chat(client,name):
             # into the gui window
     scrollbar.place(relheight=1,
                             relx=0.974)
-    # def threadTyping(client):
-    #     print("typing initiated")
-    #     prevlen=0
-    #     while True and flag:
-    #         # print("Entry is",entry0.get())
-    #         currlen=len(entry0.get())
-    #         if prevlen!=currlen:
-    #             print(name ,"is typing")
-    #             # client.send("type#"+name.encode(FORMAT))
-    #             prevlen=currlen
-    #         time.sleep(0.7)
-    # thread_typing=threading.Thread(target=threadTyping,args=(client,))
-    # thread_typing.start()
+    def threadTyping(client):
+        print("typing initiated")
+        prevlen=0
+        while True and flag:
+            # print("Entry is",entry0.get())
+            currlen=len(entry0.get())
+            if prevlen!=currlen:
+                # print(name ,"is typing")
+                client.send(str("type#"+str(name)).encode(FORMAT))
+                prevlen=currlen
+            time.sleep(0.7)
+
+    def typing(typer):
+        print(typer,"is typing")
+        entry1.config(text=str(typer[1:]+" is typing"))
+        time.sleep(1)
+        entry1.config(text="")
+
+    thread_typing=threading.Thread(target=threadTyping,args=(client,))
+    thread_typing.start()
 
     scrollbar.config(command=textCons.yview)
     textCons.config(state=DISABLED)
     window.resizable(False, False)
     window.mainloop()
-    global flag
     flag=0
     client.send("exit".encode(FORMAT))
-    # sys.exit()
+    sys.exit()
