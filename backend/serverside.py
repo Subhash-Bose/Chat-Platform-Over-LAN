@@ -59,6 +59,7 @@ while True:
 				# and the address bound to it
 				conn, addr = server.accept()
 				# conn.send("NAME".encode(FORMAT))
+				clients.append(conn)
 
 				# while True:
 				# 	msg conn.recv(1024).decode(FORMAT)
@@ -66,10 +67,11 @@ while True:
 				print("new connection from ",addr[0])
 				# login_thread.start()
 				try:
-					handle_thread = threading.Thread(target=handle1,args=(conn, addr))
+					handle_thread = threading.Thread(target=login,args=(conn, addr))
 					handle_thread.start()
 				except:
 					pass
+					
 				# 1024 represents the max amount
 				# of data that can be received (bytes)
 				
@@ -100,49 +102,6 @@ while True:
 		# # incoming messages
 
 		def login(conn,addr):
-			name = conn.recv(1024).decode(FORMAT)
-			if name=="signup":
-				name = conn.recv(1024).decode(FORMAT)
-				signup_data=name.split(":")
-				# print(signup_data)
-				try:
-					try:
-						wb=xl.load_workbook("backend\\login_data.xlsx")
-					except:
-						wb=xl.Workbook()
-						wb.save("backend\\login_data.xlsx")
-						wb=xl.load_workbook("backend\\login_data.xlsx")
-						
-					# signup_data=["sjhbd","asd@jk.lk","ahjdkhj"]
-					ws=wb.active
-					nth_row=ws.max_row+1
-					ws.cell(row=nth_row,column=1).value=signup_data[0]
-					print(signup_data[0]," has been written")
-					ws.cell(row=nth_row,column=2).value=signup_data[1].lower()+"#"+signup_data[2]
-					print(signup_data[1]," has been written")
-					# ws.cell(row=nth_row,column=3).value=signup_data[2]
-					# print(signup_data[2]," has been written")
-					wb.save("backend\\login_data.xlsx")
-					print("data Created")
-				except:
-					print("cannot create data")
-				msg=conn.send(str("Signup created for "+signup_data[0].title()).encode(FORMAT))
-			
-			if name=="login":
-				name = conn.recv(1024).decode(FORMAT)
-				login_data=name.split(":")
-				userid=login_data[0]+"#"+login_data[1]
-				wb=xl.load_workbook("backend\\login_data.xlsx")
-				ws=wb.active
-				found=0
-				for nm,id in zip(ws["A"],ws["B"]):
-					if id.value==userid:
-						print(nm.value,"Connected with ip address",addr)
-						msg=conn.send("success".encode(FORMAT))
-				else:
-					msg=conn.send("failed".encode(FORMAT))
-		otp=0
-		def handle1(conn,addr):
 			global otp
 			while True:
 				try:
@@ -200,7 +159,8 @@ while True:
 						for nm,id in zip(ws["A"],ws["B"]):
 							if id.value==userid:
 								print(nm.value,"Connected with ip address",addr)
-								msg=conn.send("success".encode(FORMAT))
+								msg=conn.send(str("success"+str(nm.value)).encode(FORMAT))
+								handle(conn,addr)
 								return
 						else:
 							msg=conn.send("failed".encode(FORMAT))
@@ -254,25 +214,39 @@ while True:
 					print("Error in handling authentication")
 
 
+		chat_msg=""
 		def handle(conn, addr):
-
-			print(f"new connection {addr}")
-			connected = True
-
-			while connected:
-				# receive message
-				message = conn.recv(1024)
-
-				# broadcast message
-				broadcastMessage(message)
-
-			# close the connection
-			conn.close()
+			send_thread= threading.Thread(target=sendMsg,args=(conn, addr))
+			recv_thread= threading.Thread(target=recvMsg,args=(conn, addr))
+			send_thread.start()
+			recv_thread.start()
 
 		# method for broadcasting
 		# messages to the each clients
 
+		def sendMsg(conn,addr):
+			global chat_msg
+			while True:
+				try:
+					if chat_msg!="":
+						print("Sending msg")
+						for client in clients:
+							client.send(chat_msg.encode(FORMAT))
+						print("Sent msg is:",chat_msg)
+					chat_msg=""
+				except:
+					pass
 
+		def recvMsg(conn,addr):
+			global chat_msg
+			while True:
+				try:
+					# conn.recv(chat_msg.decode(FORMAT))
+					print("Waiting for message...")
+					chat_msg=conn.recv(1024).decode(FORMAT)
+					print("Recieved msg is:",chat_msg)
+				except:
+					pass
 		def broadcastMessage(message):
 			for client in clients:
 				client.send(message)

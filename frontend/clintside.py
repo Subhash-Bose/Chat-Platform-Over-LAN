@@ -15,6 +15,7 @@ from tkinter import ttk
 from login import login
 from login import wrong
 from signup import signup
+from chat import chat
 # import all functions /
 # everything from chat.py file
 
@@ -273,15 +274,16 @@ def logginIn():
 		client.send("login".encode(FORMAT))
 		client.send(str(":".join(login_data)).encode(FORMAT))
 		msg=client.recv(1024).decode(FORMAT)
-		if msg=="success":
+		if msg[:7]=="success":
 			print("success recieved")
-			root = Tk()
-			root.geometry("250x170")
-			T = Text(root, height = 5, width = 52)
-			l = Label(root, text = "Welcome")
-			l.config(font =("Courier", 14))
-			l.pack()
-			root.mainloop()
+			chat(client,msg[7:])
+			# root = Tk()
+			# root.geometry("250x170")
+			# T = Text(root, height = 5, width = 52)
+			# l = Label(root, text = "Welcome")
+			# l.config(font =("Courier", 14))
+			# l.pack()
+			# root.mainloop()
 		if msg=="failed":
 			print("failed recieved")
 			if wrong():
