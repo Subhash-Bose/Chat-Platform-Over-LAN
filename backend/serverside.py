@@ -19,6 +19,10 @@ import socket
 import tqdm
 
 PORT = 5000
+file1 = open("backend//myfile.txt", "w")
+L = ["chat histroy"]
+file1.writelines(L)
+file1.close()
 while True:
 	try:
 
@@ -73,7 +77,7 @@ while True:
 		# An IPv4 address is obtained
 		# for the server.
 		SERVER = socket.gethostbyname(socket.gethostname())
-		SERVER="172.16.185.40"
+		# SERVER="172.16.185.40"
 		# Address is stored as a tuple
 		ADDRESS = (SERVER, PORT)
 
@@ -306,15 +310,25 @@ while True:
 						time.sleep(10)
 					if chat_msg=="exit":
 						return
-					for client in clients:
-						client.send(chat_msg.encode(FORMAT))
+					# for client in clients:
+					# 	client.send(chat_msg.encode(FORMAT))
+					broadcastMessage(chat_msg)
 					print("Sent msg is:",chat_msg)
 					# print("Recieved msg is:",chat_msg)
 				except:
 					pass
 		def broadcastMessage(message):
+				
 				for client in clients:
-					client.send(message)
+					try:
+						client.send(message.encode(FORMAT))
+						file1 = open("backend//myfile.txt", "a")  # append mode
+						file1.write(message+"\n")
+						file1.close()
+					except:
+						print("connections not found")
+					
+					
 				
 		def send_email(email):
 			otp=random.randint(100000,999999)   

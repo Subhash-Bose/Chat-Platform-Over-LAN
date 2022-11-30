@@ -22,7 +22,7 @@ from chat import chat
 
 PORT = 5000
 SERVER = "172.16.181.29"
-SERVER = "172.16.185.40"
+
 ADDRESS = (SERVER, PORT)
 FORMAT = "utf-8"
 
