@@ -11,15 +11,18 @@ FORMAT = "utf-8"
 flag=1
 def chat(client,name,initiate):
     global flag
-    print("client is ",client,name,flag)
+    flag=1
+    # print("flag = ",flag)
+    # print("client is ",client,name,flag)
 
     def recvMsg(client):
         global flag
         # global chat_msg
+        flag=1
         while True:
             try:
                 if flag==0:
-                    print("recv closed")
+                    # print("recv closed")
                     return
                 # client.recv(chat_msg.decode(FORMAT))
                 print("waiting for msg")
@@ -28,17 +31,24 @@ def chat(client,name,initiate):
                 if chat_msg[:3]=="msg":
                     # entry1.delete(0,END)
                     msg_decode=chat_msg.split("#")
-                    recieved_name=msg_decode[1]
+                    recieved_name0=msg_decode[1]
                     recieved_msg=msg_decode[2]
 
                     textCons.config(state=NORMAL)
-                    recieved_name=recieved_name[:recieved_name.find(" ")]
+                    recieved_name1=recieved_name0.split(" ")[0]
+                    if(recieved_name0==name):
+                        # textCons.config(fg="red")
+                        formatted_text="{:>75}:{:>10}\n\n".format(recieved_msg,recieved_name1)
+                    else:
+                    #     textCons.config(fg="black")
+                        formatted_text="{:<10}:{:<75}\n\n".format(recieved_name1,recieved_msg)
+
                     textCons.insert(END,
-                        "{:<15} : {} \n\n".format(recieved_name,recieved_msg))
+                        formatted_text)
                         
                     textCons.config(state=DISABLED)
                     textCons.see(END)
-                if chat_msg[:chat_msg.find("#")]=="client" and chat_msg[chat_msg.find("#"):]!=name:
+                if chat_msg[:chat_msg.find("#")]=="client" and chat_msg[chat_msg.find("#")+1:]!=name:
                     print(chat_msg[chat_msg.find("#"):],"Joined the chat")
                     showinfo(
                         title='New member joined',
@@ -53,7 +63,8 @@ def chat(client,name,initiate):
 
     recv_thread=threading.Thread(target=recvMsg,args=(client,))
     recv_thread.start()
-
+    for thread in threading.enumerate(): 
+        print(thread.name)
     def btn_clicked():
         window.destroy()
         global flag
@@ -106,6 +117,7 @@ def chat(client,name,initiate):
         k=entry0.get()
         msg_encode="msg#"+name+"#"+k
         client.send(msg_encode.encode(FORMAT))
+        print(msg_encode,"sent")
 
         entry0.delete(0,END)
 
@@ -228,7 +240,7 @@ def chat(client,name,initiate):
                                 height=2,
                                 bg="#12de22",
                                 fg="black",
-                                font="Helvetica 10",
+                                font="Helvetica 13",
                                 padx=5,
                                 pady=5)
 
@@ -245,25 +257,29 @@ def chat(client,name,initiate):
     scrollbar.place(relheight=1,
                             relx=0.974)
     def threadTyping(client):
-        print("typing initiated")
+        # print("typing initiated")
         prevlen=0
         while True:
             if flag==0:
                 print("typing closed")
                 return
             # print("Entry is",entry0.get())
+            # print("getting typed")
             currlen=len(entry0.get())
-            if prevlen!=currlen:
+            if prevlen!=currlen and currlen!=0:
                 # print(name ,"is typing")
                 client.send(str("type#"+str(name)).encode(FORMAT))
+                # print("typing signal sent")
                 prevlen=currlen
-            time.sleep(0.7)
+            time.sleep(1)
 
     def typing(typer):
-        print(typer,"is typing")
-        entry1.config(text=str(typer[1:]+" is typing"))
-        time.sleep(1)
-        entry1.config(text="")
+        # print(typer,"is typing")
+        if name!=typer[1:]:
+            nm=typer[1:].split(" ")[0]
+            entry1.config(text=str(nm+" is typing"))
+            time.sleep(1)
+            entry1.config(text="")
 
     thread_typing=threading.Thread(target=threadTyping,args=(client,))
     thread_typing.start()
@@ -276,7 +292,8 @@ def chat(client,name,initiate):
     print("exitted")
     # global flag
     flag=0
-    client.send("exit".encode(FORMAT))
+    client.send(str("exit#"+name).encode(FORMAT))
+    print("exitted sent","exit#"+name)
     # exit()
     return "exit"
     # sys.exit()
