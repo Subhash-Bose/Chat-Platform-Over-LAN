@@ -66,6 +66,7 @@ while True:
 
 					file.write(file_bytes)
 					file.close()
+					print("file downloaded")
 					break
 			except:
 				print("file not downloaded")
