@@ -175,6 +175,7 @@ def chat(client,name,initiate):
         print("file bits sent")
         client.send(b"<END>")
         file.close()
+        
         # client.close()
         return
             
