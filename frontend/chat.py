@@ -166,16 +166,14 @@ def chat(client,name,initiate):
         time.sleep(1)
         client.send(str(file_size).encode(FORMAT))
         print(str(file_size),"Sent")
-        time.sleep(1)
-
+        time.sleep(3)
 
         data=file.read()
         client.sendall(data)
-        # time.sleep()
+        time.sleep(2)
         print("file bits sent")
         client.send(b"<END>")
         file.close()
-        
         # client.close()
         return
             
