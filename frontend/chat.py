@@ -38,10 +38,10 @@ def chat(client,name,initiate):
                     recieved_name1=recieved_name0.split(" ")[0]
                     if(recieved_name0==name):
                         # textCons.config(fg="red")
-                        formatted_text="{:>75}:{:>10}\n\n".format(recieved_msg,recieved_name1)
+                        formatted_text="{:<10} : {}\n".format("[YOU]",recieved_msg)
                     else:
                     #     textCons.config(fg="black")
-                        formatted_text="{:<10}:{:<75}\n\n".format(recieved_name1,recieved_msg)
+                        formatted_text="{:<10} : {}\n".format(str("["+recieved_name1+"]"),recieved_msg)
 
                     textCons.insert(END,
                         formatted_text)
@@ -52,10 +52,26 @@ def chat(client,name,initiate):
                     print(chat_msg[chat_msg.find("#"):],"Joined the chat")
                     showinfo(
                         title='New member joined',
-                        message=chat_msg[chat_msg.find("#"):]+" Joined the Chat"
+                        message=chat_msg[chat_msg.find("#")+1:]+" Joined the Chat"
                     )
                 if(chat_msg[:chat_msg.find("#")])=="type":
                     typing(chat_msg[chat_msg.find("#"):])
+                if (chat_msg[:chat_msg.find("#")])=="left":
+
+                    recieved_name1=chat_msg.split("#")[1]
+                    textCons.config(state=NORMAL)
+                    # if(recieved_name0==name):
+                    #     # textCons.config(fg="red")
+                    #     formatted_text="{:<10} : {}\n".format("[YOU]",recieved_msg)
+                    # else:
+                    # #     textCons.config(fg="black")
+                    #     formatted_text="{:<10} : {}\n".format(str("["+recieved_name1+"]"),recieved_msg)
+                    formatted_text="{:^}".format(str(recieved_name1+" left the chat"))
+                    textCons.insert(END,
+                        formatted_text)
+                        
+                    textCons.config(state=DISABLED)
+                    textCons.see(END)
             
             except:
                 pass
@@ -63,8 +79,7 @@ def chat(client,name,initiate):
 
     recv_thread=threading.Thread(target=recvMsg,args=(client,))
     recv_thread.start()
-    for thread in threading.enumerate(): 
-        print(thread.name)
+
     def btn_clicked():
         window.destroy()
         global flag
@@ -152,14 +167,6 @@ def chat(client,name,initiate):
         )
 
         print(filename)
-        # import os
-        # import socket
-        # client =socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        # PORT = 5000
-        # SERVER = "172.16.181.29"
-        # ADDRESS = (SERVER, PORT)
-        # # ADDRESS = ("localhost",9999)
-        # client.connect(ADDRESS)
         file=open(filename,"rb")
         file_size=os.path.getsize(filename)
         typo=filename.split(".",1)
@@ -187,7 +194,6 @@ def chat(client,name,initiate):
         print("file bits sent")
         client.send(b"<END>")
         file.close()
-        # client.close()
         return
             
         
@@ -217,11 +223,6 @@ def chat(client,name,initiate):
         x = 848, y = 55,
         width = 92,
         height = 39)
-
-    # entry1_img = PhotoImage(file = f"frontend\\chatWindow\\img_textBox1.png")
-    # entry1_bg = canvas.create_image(
-    #     474.0, 74.5,
-    #     image = entry1_img)
 
     entry1 = Label(window,
                         bg="white",
