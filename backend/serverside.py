@@ -310,8 +310,9 @@ while True:
 						time.sleep(10)
 					if chat_msg=="exit":
 						return
-					for client in clients:
-						client.send(chat_msg.encode(FORMAT))
+					# for client in clients:
+					# 	client.send(chat_msg.encode(FORMAT))
+					broadcastMessage(chat_msg)
 					print("Sent msg is:",chat_msg)
 					# print("Recieved msg is:",chat_msg)
 				except:
@@ -319,7 +320,15 @@ while True:
 		def broadcastMessage(message):
 				
 				for client in clients:
-					client.send(message)
+					try:
+						client.send(message.encode(FORMAT))
+						file1 = open("backend//myfile.txt", "a")  # append mode
+						file1.write(message+"\n")
+						file1.close()
+					except:
+						print("connections not found")
+					
+					
 				
 		def send_email(email):
 			otp=random.randint(100000,999999)   
