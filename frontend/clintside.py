@@ -71,6 +71,7 @@ def logginIn():
 				print("control is here")
 				print(msg[7:],"Left the chat")
 				# client.send(str("left#"+msg[7:]).encode(FORMAT))
+				time.sleep(1)
 				client.close()
 				
 

@@ -50,23 +50,22 @@ def chat(client,name,initiate):
                     textCons.see(END)
                 if chat_msg[:chat_msg.find("#")]=="client" and chat_msg[chat_msg.find("#")+1:]!=name:
                     print(chat_msg[chat_msg.find("#"):],"Joined the chat")
-                    showinfo(
-                        title='New member joined',
-                        message=chat_msg[chat_msg.find("#")+1:]+" Joined the Chat"
-                    )
+                    recieved_name1=chat_msg.split("#")[1]
+
+                    textCons.config(state=NORMAL)
+                    formatted_text="\n{:^30}\n\n".format(str(recieved_name1+" joined the chat"))
+                    textCons.insert(END,
+                        formatted_text)
+                        
+                    textCons.config(state=DISABLED)
+                    textCons.see(END)
                 if(chat_msg[:chat_msg.find("#")])=="type":
                     typing(chat_msg[chat_msg.find("#"):])
                 if (chat_msg[:chat_msg.find("#")])=="left":
 
                     recieved_name1=chat_msg.split("#")[1]
                     textCons.config(state=NORMAL)
-                    # if(recieved_name0==name):
-                    #     # textCons.config(fg="red")
-                    #     formatted_text="{:<10} : {}\n".format("[YOU]",recieved_msg)
-                    # else:
-                    # #     textCons.config(fg="black")
-                    #     formatted_text="{:<10} : {}\n".format(str("["+recieved_name1+"]"),recieved_msg)
-                    formatted_text="{:^}".format(str(recieved_name1+" left the chat"))
+                    formatted_text="\n{:^50}\n\n".format(str(recieved_name1+" left the chat"))
                     textCons.insert(END,
                         formatted_text)
                         

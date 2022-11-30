@@ -17,7 +17,8 @@ import openpyxl as xl
 
 import socket
 import tqdm
-
+SERVER = socket.gethostbyname(socket.gethostname())
+SERVER="172.16.185.40"
 PORT = 5000
 while True:
 	try:
@@ -63,13 +64,7 @@ while True:
 		ADDRESS = (SERVER, PORT)
 		FORMAT = "utf-8"
 
-		# Lists that will contains
-		# all the clients connected to
-		# the server and their names.
 		clients, names = [], []
-
-		# Create a new socket for
-		# the server
 		server = socket.socket(socket.AF_INET,
 							socket.SOCK_STREAM)
 
@@ -266,12 +261,14 @@ while True:
 							print(names[client_index],"left the chat")
 							del names[client_index]
 							# print(clients)
-							# del clients[client_index]
+							del clients[client_index]
 							print("length of name and cl is",len(names))
 							# print(conn)
 							# print(clients)
 							conn.close()
-							broadcastMessage("#left"+nm)
+							print("connection closed")
+							broadcastMessage("left#"+nm)
+							print("msg broadcasted")
 							# return
 						except:
 							print("Error in cl")
