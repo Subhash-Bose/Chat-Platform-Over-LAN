@@ -28,20 +28,13 @@ def chat(client,name,initiate):
                 if chat_msg[:3]=="msg":
                     # entry1.delete(0,END)
                     msg_decode=chat_msg.split("#")
-                    recieved_name0=msg_decode[1]
+                    recieved_name=msg_decode[1]
                     recieved_msg=msg_decode[2]
 
                     textCons.config(state=NORMAL)
-                    recieved_name1=recieved_name0.split(" ")[0]
-                    if(recieved_name0==name):
-                        # textCons.config(fg="red")
-                        formatted_text="{:>75}:{:>10}\n\n".format(recieved_msg,recieved_name1)
-                    else:
-                    #     textCons.config(fg="black")
-                        formatted_text="{:<10}:{:<75}\n\n".format(recieved_name1,recieved_msg)
-
+                    recieved_name=recieved_name[:recieved_name.find(" ")]
                     textCons.insert(END,
-                        "{:<15} : {} \n\n".format(recieved_name1,recieved_msg))
+                        "{:<15} : {} \n\n".format(recieved_name,recieved_msg))
                         
                     textCons.config(state=DISABLED)
                     textCons.see(END)
@@ -60,8 +53,7 @@ def chat(client,name,initiate):
 
     recv_thread=threading.Thread(target=recvMsg,args=(client,))
     recv_thread.start()
-    for thread in threading.enumerate(): 
-        print(thread.name)
+
     def btn_clicked():
         window.destroy()
         global flag

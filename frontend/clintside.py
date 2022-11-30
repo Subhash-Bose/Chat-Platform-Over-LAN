@@ -282,18 +282,11 @@ def logginIn():
 		msg=client.recv(1024).decode(FORMAT)
 		if msg[:7]=="success":
 			print("success recieved")
-			try:
-				resp=chat(client,msg[7:],1)
-				print("control is here")
-				print(msg[7:],"Left the chat")
-				# client.send(str("left#"+msg[7:]).encode(FORMAT))
-				client.close()
-				
-
-			except:
-				pass
-			# if resp=="exit":
-			return
+			resp=chat(client,msg[7:],1)
+			print("control is here")
+			client.close()
+			if resp=="exit":
+				return
 			# root = Tk()
 			# root.geometry("250x170")
 			# T = Text(root, height = 5, width = 52)

@@ -280,14 +280,14 @@ while True:
 		def handle(conn, addr):
 			
 			# send_thread= threading.Thread(target=sendMsg,args=(conn, addr))
-			recv_thread= threading.Thread(target=recvMsg,args=(conn, addr,nm))
+			recv_thread= threading.Thread(target=recvMsg,args=(conn, addr))
 			# send_thread.start()
 			recv_thread.start()
 
 		# method for broadcasting
 		# messages to the each clients
 
-		def recvMsg(conn,addr,nm):
+		def recvMsg(conn,addr):
 			print("here")
 			global chat_msg
 			while True:
@@ -308,46 +308,10 @@ while True:
 						except:
 							print("Attachment not recieved")
 						time.sleep(10)
-					if chat_msg[:chat_msg.find("#")]=="exit":
-						print("recieved exit request")
-						
-						# time.sleep(3)
-						print(chat_msg)
-						print("all names are",names)
-						# nm=chat_msg[chat_msg.find("#")+1:]
-						# time.sleep(5)
-						try:
-							# print(str(conn))
-							client_index=names.index(nm)
-							print("index is",client_index)
-							# print(clients)
-							# print()
-							print(names[client_index],"left the chat")
-							del names[client_index]
-							# print(clients)
-							# del clients[client_index]
-							print("length of name and cl is",len(names))
-							# print(conn)
-							# print(clients)
-							conn.close()
-							# return
-						except:
-							print("Error in cl")
-							# time.sleep(5)
-						# print("client ind recieved")
-						# time.sleep(3)
-						# client.close()
-						# try:
-							return
-						# except:
-						# 	print("error in exitting")
+					if chat_msg=="exit":
 						return
-						
 					for client in clients:
-						try:
-							client.send(chat_msg.encode(FORMAT))
-						except:
-							print("Connection not found")
+						client.send(chat_msg.encode(FORMAT))
 					print("Sent msg is:",chat_msg)
 					# print("Recieved msg is:",chat_msg)
 				except:
