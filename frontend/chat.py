@@ -9,6 +9,7 @@ from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo
 FORMAT = "utf-8"
 flag=1
+active_list=[]
 def chat(client,name,initiate):
     global flag
     flag=1
@@ -25,9 +26,9 @@ def chat(client,name,initiate):
                     # print("recv closed")
                     return
                 # client.recv(chat_msg.decode(FORMAT))
-                print("waiting for msg")
+                # print("waiting for msg")
                 chat_msg=client.recv(1024).decode(FORMAT)
-                print("recieved msg ",chat_msg)
+                # print("recieved msg ",chat_msg,"  ")
                 if chat_msg[:3]=="msg":
                     # entry1.delete(0,END)
                     msg_decode=chat_msg.split("#")
@@ -38,10 +39,10 @@ def chat(client,name,initiate):
                     recieved_name1=recieved_name0.split(" ")[0]
                     if(recieved_name0==name):
                         # textCons.config(fg="red")
-                        formatted_text="{:<10} : {}\n".format("[YOU]",recieved_msg)
+                        formatted_text="{:<14} : {}\n".format("[YOU]",recieved_msg)
                     else:
                     #     textCons.config(fg="black")
-                        formatted_text="{:<10} : {}\n".format(str("["+recieved_name1+"]"),recieved_msg)
+                        formatted_text="{:<14} : {}\n".format(str("["+recieved_name1+"]"),recieved_msg)
 
                     textCons.insert(END,
                         formatted_text)
@@ -49,28 +50,65 @@ def chat(client,name,initiate):
                     textCons.config(state=DISABLED)
                     textCons.see(END)
                 if chat_msg[:chat_msg.find("#")]=="client" and chat_msg[chat_msg.find("#")+1:]!=name:
-                    print(chat_msg[chat_msg.find("#"):],"Joined the chat")
+                    # print(chat_msg[chat_msg.find("#"):],"Joined the chat")
                     recieved_name1=chat_msg.split("#")[1]
+                    active_list.append(recieved_name1.split(" ")[0])
 
                     textCons.config(state=NORMAL)
-                    formatted_text="\n{:^30}\n\n".format(str(recieved_name1+" joined the chat"))
+                    formatted_text="{:^120}\n".format(str(recieved_name1+" joined the chat"))
                     textCons.insert(END,
                         formatted_text)
                         
                     textCons.config(state=DISABLED)
                     textCons.see(END)
+                if chat_msg[:chat_msg.find("#")]=="active":
+                    # print("active detected")
+                    active=chat_msg.split("#")
+                    active=active[1:]
+                    # print("active list is",active)
+                    formatted_text=""
+                    for curr in active:
+                        formatted_text+="\u25CF "+curr.split(" ")[0]+"\n"
+                    time.sleep(0.5)
+                    # print("writing")
+                    textCons1.config(state=NORMAL)
+                    textCons1.delete("1.0","end")
+                    textCons1.insert(END,
+                        formatted_text)
+                        
+                    textCons1.config(state=DISABLED)
+
+                    textCons1.see(END)
+                    # print("okk")
+
                 if(chat_msg[:chat_msg.find("#")])=="type":
                     typing(chat_msg[chat_msg.find("#"):])
                 if (chat_msg[:chat_msg.find("#")])=="left":
 
                     recieved_name1=chat_msg.split("#")[1]
                     textCons.config(state=NORMAL)
-                    formatted_text="\n{:^50}\n\n".format(str(recieved_name1+" left the chat"))
+                    formatted_text="{:^120}\n".format(str(recieved_name1+" left the chat"))
                     textCons.insert(END,
                         formatted_text)
                         
                     textCons.config(state=DISABLED)
                     textCons.see(END)
+
+                    # try:
+                    #     active_list.remove(recieved_name1.split(" ")[0])
+                    # except:
+                    #     print("No one was present")
+
+                    # textCons1.delete(0,END)
+                    # textCons1.config(state=NORMAL)
+                    # formatted_text=""
+                    # for active in active_list:
+                    #     formatted_text+="\u26AB "+active+"\n"
+                    # textCons1.insert(END,
+                    #     formatted_text)
+                        
+                    # textCons1.config(state=DISABLED)
+                    # textCons.see(END)
             
             except:
                 pass
@@ -84,7 +122,7 @@ def chat(client,name,initiate):
         global flag
         flag=0
         client.send("exit".encode(FORMAT))
-        print("Button Clicked")
+        # print("Button Clicked")
         return
 
 
@@ -95,7 +133,7 @@ def chat(client,name,initiate):
     window.configure(bg = "#ffffff")
     canvas = Canvas(
         window,
-        bg = "#ffffff",
+        bg = "#d1d1d1",
         height = 600,
         width = 1000,
         bd = 0,
@@ -103,7 +141,7 @@ def chat(client,name,initiate):
         relief = "ridge")
     canvas.place(x = 0, y = 0)
 
-
+    # window.wm_attributes('-transparentcolor', '#d1d1d1')
     labelHead = Label(window,
                                 bg="white",
                                 fg="black",
@@ -111,7 +149,23 @@ def chat(client,name,initiate):
                                 text=name,
                                 font="Helvetica 13 bold",
                                 pady=5)
-    labelHead.place(relwidth=1)
+    labelHead.place(x=400,y=40)
+    labelHead1 = Label(window,
+                                bg="white",
+                                fg="Green",
+                                # take username from singup or singin
+                                text="\u23F3",
+                                font="Helvetica 13 bold",
+                                pady=5)
+    labelHead1.place(x = 810, y = 128)
+    labelHead2 = Label(window,
+                                bg="white",
+                                fg="blue",
+                                # take username from singup or singin
+                                text="Active ",
+                                font="Helvetica 13 bold",
+                                pady=5)
+    labelHead2.place(x = 840, y = 128)
 
     entry0_img = PhotoImage(file = f"frontend\chatWindow\img_textBox0.png")
     entry0_bg = canvas.create_image(
@@ -131,7 +185,7 @@ def chat(client,name,initiate):
         k=entry0.get()
         msg_encode="msg#"+name+"#"+k
         client.send(msg_encode.encode(FORMAT))
-        print(msg_encode,"sent")
+        # print(msg_encode,"sent")
 
         entry0.delete(0,END)
 
@@ -143,7 +197,7 @@ def chat(client,name,initiate):
         command = lambda:getthemassage(),
         relief = "flat")
 
-    print(entry0.get())
+    # print(entry0.get())
     b0.place(
         x = 811, y = 526,
         width = 142,
@@ -165,7 +219,7 @@ def chat(client,name,initiate):
             message=filename
         )
 
-        print(filename)
+        # print(filename)
         file=open(filename,"rb")
         file_size=os.path.getsize(filename)
         typo=filename.split(".",1)
@@ -180,17 +234,17 @@ def chat(client,name,initiate):
         # return
         time.sleep(1)
         client.send(("recived."+kk).encode(FORMAT))
-        print(("recived."+kk),"Sent")
+        # print(("recived."+kk),"Sent")
         time.sleep(3)
         client.send(str(file_size).encode(FORMAT))
-        print(str(file_size),"Sent")
+        # print(str(file_size),"Sent")
         time.sleep(3)
 
 
         data=file.read()
         client.sendall(data)
         time.sleep(1)
-        print("file bits sent")
+        # print("file bits sent")
         client.send(b"<END>")
         file.close()
         return
@@ -204,7 +258,11 @@ def chat(client,name,initiate):
         highlightthickness = 0,
         command = lambda:select_file(),
         relief = "flat")
-
+    # background_img = PhotoImage(file = f"frontend\\login\\background.png")
+    # background = canvas.create_image(
+    #     502.0, 294.0,
+    #     image=background_img)
+    # background.attributes('-alpha',0.5)
     b1.place(
         x = 848, y = 427,
         width = 84,
@@ -239,7 +297,7 @@ def chat(client,name,initiate):
     textCons = Text(window,
                                 width=18,
                                 height=2,
-                                bg="#12de22",
+                                bg="#d1d1d1",
                                 fg="black",
                                 font="Helvetica 13",
                                 padx=5,
@@ -249,20 +307,37 @@ def chat(client,name,initiate):
         x = 89, y = 128,
         width = 703,
         height = 389)
+    
+    textCons1 = Text(window,
+                            width=18,
+                            height=2,
+                            bg="#f7e4e4",
+                            fg="#3b5998",
+                            font="Helvetica 13",
+                            padx=10,
+                            pady=7)
+
+    textCons1.place(
+        x = 802, y = 155,
+        width = 170,
+        height = 250)
 
     # scrolbar
     scrollbar = Scrollbar(textCons)
-
+    scrollbar1 = Scrollbar(textCons1)
+    
             # place the scroll bar
             # into the gui window
     scrollbar.place(relheight=1,
+                            relx=0.974)
+    scrollbar1.place(relheight=1,
                             relx=0.974)
     def threadTyping(client):
         # print("typing initiated")
         prevlen=0
         while True:
             if flag==0:
-                print("typing closed")
+                # print("typing closed")
                 return
             # print("Entry is",entry0.get())
             # print("getting typed")
@@ -272,14 +347,14 @@ def chat(client,name,initiate):
                 client.send(str("type#"+str(name)).encode(FORMAT))
                 # print("typing signal sent")
                 prevlen=currlen
-            time.sleep(1)
+            time.sleep(0.7)
 
     def typing(typer):
         # print(typer,"is typing")
         if name!=typer[1:]:
             nm=typer[1:].split(" ")[0]
             entry1.config(text=str(nm+" is typing"))
-            time.sleep(1)
+            time.sleep(0.7)
             entry1.config(text="")
 
     thread_typing=threading.Thread(target=threadTyping,args=(client,))
@@ -290,11 +365,11 @@ def chat(client,name,initiate):
     window.resizable(False, False)
     window.mainloop()
 
-    print("exitted")
+    # print("exitted")
     # global flag
     flag=0
     client.send(str("exit#"+name).encode(FORMAT))
-    print("exitted sent","exit#"+name)
+    # print("exitted sent","exit#"+name)
     # exit()
     return "exit"
     # sys.exit()
