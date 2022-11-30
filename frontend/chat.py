@@ -28,7 +28,7 @@ def chat(client,name,initiate):
                 if chat_msg[:3]=="msg":
                     # entry1.delete(0,END)
                     msg_decode=chat_msg.split("#")
-                    recieved_name0=msg_decode[1]
+                    recieved_name=msg_decode[1]
                     recieved_msg=msg_decode[2]
 
                     textCons.config(state=NORMAL)
@@ -41,7 +41,7 @@ def chat(client,name,initiate):
                         formatted_text="{:<10}:{:<75}\n\n".format(recieved_name1,recieved_msg)
 
                     textCons.insert(END,
-                        "{:<15} : {} \n\n".format(recieved_name1,recieved_msg))
+                        "{:<15} : {} \n\n".format(recieved_name,recieved_msg))
                         
                     textCons.config(state=DISABLED)
                     textCons.see(END)
