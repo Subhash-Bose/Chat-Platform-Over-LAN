@@ -163,7 +163,7 @@ def chat(client,name,initiate):
         time.sleep(1)
         client.send(("recived."+kk).encode(FORMAT))
         print(("recived."+kk),"Sent")
-        time.sleep(1)
+        time.sleep(3)
         client.send(str(file_size).encode(FORMAT))
         print(str(file_size),"Sent")
         time.sleep(3)
