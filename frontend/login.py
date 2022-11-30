@@ -8,7 +8,7 @@ def login():
     ext=0
     def btn_login():
         global response
-        print("Login button clicked")
+        # print("Login button clicked")
         # print(getEmail())
         # print(getPassword())
         response=[getEmail(),getPassword()]
@@ -22,7 +22,7 @@ def login():
         global ext
         ext=1
         response=["","signup"]
-        print("Signup button clicked")
+        # print("Signup button clicked")
         window.destroy()
     
     def btn_forgot():
@@ -141,7 +141,7 @@ def wrong():
         global w_response
         w_response=1
         window1.destroy()
-        print("Button Clicked")
+        # print("Button Clicked")
     window1 = Tk()
 
     window1.geometry("600x360")

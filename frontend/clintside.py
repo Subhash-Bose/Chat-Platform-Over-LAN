@@ -251,43 +251,45 @@ class GUI:
 # 			client.close()
 # 			break
 def createSignup():
-	print("sign req initiated")
+	# print("sign req initiated")
 	signup_data=signup()
-	print("signup data",signup_data,len(signup_data))
+	# print("signup data",signup_data,len(signup_data))
 	if(len(signup_data)==1):
 		return
 	client.send("signup".encode(FORMAT))
 	client.send(str(":".join(signup_data)).encode(FORMAT))
-	print("sign up requested")
+	# print("sign up requested")
 	
 	msg=client.recv(1024).decode(FORMAT)
-	print(msg)
+	# print(msg)
 	logginIn()
 	# print(msg)
 
 def logginIn():
-	print("trying to log in")
+	# print("trying to log in")
 	login_data=login()
-	print("login data recieved",login_data)
+	# print("login data recieved",login_data)
 	if(len(login_data)==1):
 		return
 	if len(login_data[0])==0:
 		if login_data[1]=="signup":
 			createSignup()
 		if login_data[1]=="forgot":
-			print("Reset password initiated")
+			# print("Reset password initiated")
 			f=resetPassword()
 	else:
 		client.send("login".encode(FORMAT))
 		client.send(str(":".join(login_data)).encode(FORMAT))
 		msg=client.recv(1024).decode(FORMAT)
 		if msg[:7]=="success":
-			print("success recieved")
+			# print("success recieved")
 			try:
+				print("Info   : Logged In successfully")
 				resp=chat(client,msg[7:],1)
-				print("control is here")
-				print(msg[7:],"Left the chat")
+				# print("control is here")
+				# print(msg[7:],"Left the chat")
 				# client.send(str("left#"+msg[7:]).encode(FORMAT))
+				time.sleep(1)
 				client.close()
 				
 
@@ -303,7 +305,7 @@ def logginIn():
 			# l.pack()
 			# root.mainloop()
 		if msg=="failed":
-			print("failed recieved")
+			# print("failed recieved")
 			if wrong():
 				logginIn()
 
@@ -321,18 +323,19 @@ def resetPassword():
 			client.send("reset".encode())
 			client.send(email.encode())
 			validate=1
-			print("OTP request sent")
+			showinfo(title="OTP Request sent",message="Wait for 1 min befor requesting another OTP")
+			# print("OTP request sent")
 
 
 	def validateEmail(str):
 		pattern=re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z]+\.[A-Z|a-z]{2,}\b')
 		if not re.fullmatch(pattern,str):
 			canvas.itemconfig(4,state='normal')
-			print("Invalid Email")
+			# print("Invalid Email")
 			return 0
 		else:
 			canvas.itemconfig(4,state='hidden')
-			print("Valid Email")
+			# print("Valid Email")
 			return 1
 	def btn_otp():
 		global validate
@@ -341,7 +344,7 @@ def resetPassword():
 			client.send("requestotp".encode(FORMAT))
 			client.send(str(otp+"#"+getEmail()).encode(FORMAT))
 			response=client.recv(1024).decode(FORMAT)
-			print(response)
+			# print(response)
 			if response=="invalidotp":
 				canvas.itemconfig(5,state='normal')
 				return
@@ -352,15 +355,21 @@ def resetPassword():
 				validate=0
 				canvas.itemconfig(4,state='normal')
 			else:
-				canvas.itemconfig(4,state='hidden')
-				root = Tk()
-				root.geometry("350x170")
-				T = Text(root, height = 5, width = 52)
-				l = Label(root, text = response)
-				l.config(font =("Courier", 14))
-				l.pack()
-				root.mainloop()
-				# logginIn()
+				# canvas.itemconfig(4,state='hidden')
+				# root = Tk()
+				# root.geometry("350x170")
+				# T = Text(root, height = 5, width = 52)
+				# l = Label(root, text = response)
+				# l.config(font =("Courier", 14))
+				# l.pack()
+				# root.mainloop()
+				showinfo(
+                        title='Your credentials are',
+                        message=response
+                    )
+				window.destroy()
+				logginIn()
+				pass
 
 	def btn_login():
 		window.destroy()
