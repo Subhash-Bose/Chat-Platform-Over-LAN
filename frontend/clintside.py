@@ -21,7 +21,7 @@ from chat import chat
 
 
 PORT = 5000
-SERVER = "172.16.185.40"
+SERVER = "172.16.181.29"
 ADDRESS = (SERVER, PORT)
 FORMAT = "utf-8"
 
@@ -30,6 +30,11 @@ FORMAT = "utf-8"
 client = socket.socket(socket.AF_INET,
 					socket.SOCK_STREAM)
 client.connect(ADDRESS)
+
+
+
+
+
 
 
 # GUI class for the chat
@@ -455,8 +460,8 @@ def resetPassword():
 
 	window.resizable(False, False)
 	window.mainloop()
-	
-	
+
+
 	
 logginIn()
 exit()

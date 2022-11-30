@@ -125,8 +125,8 @@ def chat(client,name,initiate):
 
     def select_file():
         filetypes = (
-            ('text files', '*.txt'),
-            ('All files', '*.*')
+            ('All files', '*.*'),
+            ('text files', '*.txt')
         )
 
         filename = fd.askopenfilename(
@@ -140,38 +140,45 @@ def chat(client,name,initiate):
         )
 
         print(filename)
-
-
         # import os
         # import socket
         # client =socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         # PORT = 5000
         # SERVER = "172.16.181.29"
         # ADDRESS = (SERVER, PORT)
+        # # ADDRESS = ("localhost",9999)
         # client.connect(ADDRESS)
         file=open(filename,"rb")
         file_size=os.path.getsize(filename)
         typo=filename.split(".",1)
         kk=typo[1]
         textCons.config(state=NORMAL)
-    
-        textCons.insert(END,
-                        "NAME=> "+ filename+"\n\n")
+   
+        textCons.insert(END,name+ filename+"\n\n")
 
         textCons.config(state=DISABLED)
         textCons.see(END)
-        client.send("attachment#".encode(FORMAT))
-
-        return
-        client.send(("recived."+kk).encode())
-        client.send(str(file_size).encode())
+        client.send(("ATTACHMENT#").encode(FORMAT))
+        # return
+        time.sleep(1)
+        client.send(("recived."+kk).encode(FORMAT))
+        print(("recived."+kk),"Sent")
+        time.sleep(1)
+        client.send(str(file_size).encode(FORMAT))
+        print(str(file_size),"Sent")
+        time.sleep(1)
 
 
         data=file.read()
         client.sendall(data)
+        # time.sleep()
+        print("file bits sent")
         client.send(b"<END>")
         file.close()
-        client.close()
+        # client.close()
+        return
+            
+        
 
     img1 = PhotoImage(file = f"frontend\\chatWindow\\img1.png")
     b1 = Button(
