@@ -25,12 +25,21 @@ file1.writelines(L)
 file1.close()
 while True:
 	try:
+
+
+
+
+
+
 		recivingTheattecedfile=" "
 		def reciver(name,conn):
 			try:
 				print("recived file : ",name)
 				while True:
+					
 					try:
+
+						# client,addr=server.accept()
 						file_name=conn.recv(1024).decode(FORMAT)
 						print("Filename is",file_name)
 						print("waiting for file size")
@@ -39,8 +48,11 @@ while True:
 						print("and filesize",file_size)
 					except:
 						print("filename not recieved")
+					
+					# return
 
 					file=open(file_name,"wb")
+					
 					file_bytes=b""
 					done=False
 					print("File opened to write")
@@ -62,10 +74,15 @@ while True:
 					break
 			except:
 				print("file not downloaded")
+		# An IPv4 address is obtained
+		# for the server.
 		SERVER = socket.gethostbyname(socket.gethostname())
 		# SERVER="172.16.185.40"
 		# Address is stored as a tuple
 		ADDRESS = (SERVER, PORT)
+
+		# the format in which encoding
+		# and decoding will occur
 		FORMAT = "utf-8"
 
 		# Lists that will contains
@@ -112,6 +129,35 @@ while True:
 				except:
 					pass
 					
+				# 1024 represents the max amount
+				# of data that can be received (bytes)
+				
+
+
+		# 		# append the name and client
+		# 		# to the respective list
+		# 		names.append(name)
+		# 		clients.append(conn)
+
+		# 		print(f"Name is :{name}")
+
+		# 		# broadcast message
+		# 		broadcastMessage(f"{name} has joined the chat!".encode(FORMAT))
+
+		# 		conn.send('Connection successful!'.encode(FORMAT))
+
+		# 		# Start the handling thread
+		# 		thread = threading.Thread(target=handle,
+		# 								args=(conn, addr))
+		# 		thread.start()
+
+		# 		# no. of clients connected
+		# 		# to the server
+		# 		print(f"active connections {threading.activeCount()-1}")
+
+		# # method to handle the
+		# # incoming messages
+
 		def login(conn,addr):
 			global otp
 			while True:
@@ -229,17 +275,24 @@ while True:
 				except:
 					print("Error in handling authentication")
 
+
 		chat_msg=""
 		def handle(conn, addr):
 			
+			# send_thread= threading.Thread(target=sendMsg,args=(conn, addr))
 			recv_thread= threading.Thread(target=recvMsg,args=(conn, addr,nm))
+			# send_thread.start()
 			recv_thread.start()
+
+		# method for broadcasting
+		# messages to the each clients
 
 		def recvMsg(conn,addr,nm):
 			print("here")
 			global chat_msg
 			while True:
 				try:
+					# conn.recv(chat_msg.decode(FORMAT))
 					print("Waiting for message...")
 					chat_msg=conn.recv(1024).decode(FORMAT)
 					print("recieved msg length=",len(chat_msg),chat_msg)
@@ -250,14 +303,19 @@ while True:
 							recv_thread2= threading.Thread(target=reciver,args=("rohit",conn))
 							recv_thread2.start()
 							recv_thread2.join()
+						# continue
+							# reciver("rohit",conn)
 						except:
 							print("Attachment not recieved")
 						time.sleep(10)
 					if chat_msg[:chat_msg.find("#")]=="exit":
 						print("recieved exit request")
-
+						
+						# time.sleep(3)
 						print(chat_msg)
 						print("all names are",names)
+						# nm=chat_msg[chat_msg.find("#")+1:]
+						# time.sleep(5)
 						try:
 							# print(str(conn))
 							client_index=names.index(nm)
@@ -272,13 +330,24 @@ while True:
 							# print(conn)
 							# print(clients)
 							conn.close()
-							broadcastMessage("#left"+nm)
 							# return
 						except:
 							print("Error in cl")
+							# time.sleep(5)
+						# print("client ind recieved")
+						# time.sleep(3)
+						# client.close()
+						# try:
 							return
+						# except:
+						# 	print("error in exitting")
 						return
-					broadcastMessage(chat_msg)
+						
+					for client in clients:
+						try:
+							client.send(chat_msg.encode(FORMAT))
+						except:
+							print("Connection not found")
 					print("Sent msg is:",chat_msg)
 					# print("Recieved msg is:",chat_msg)
 				except:
@@ -286,10 +355,7 @@ while True:
 		def broadcastMessage(message):
 				
 				for client in clients:
-					try:
-						client.send(message.encode(FORMAT))
-					except:
-						print("Connection not found")
+					client.send(message)
 				
 		def send_email(email):
 			otp=random.randint(100000,999999)   
@@ -322,6 +388,13 @@ while True:
 				print("Error in sending OTP")
 			print("Email sent to ",email)
 			return otp
+
+
+		# call the method to
+		# begin the communication
+		# recv_thread2= threading.Thread(target=reciver,args=("rohit",))
+		# recv_thread2.start()
+			# send_thread.start()
 		
 		startChat()
 		
