@@ -72,7 +72,7 @@ while True:
 		# An IPv4 address is obtained
 		# for the server.
 		SERVER = socket.gethostbyname(socket.gethostname())
-		# SERVER="172.16.185.40"
+		SERVER="172.16.185.40"
 		# Address is stored as a tuple
 		ADDRESS = (SERVER, PORT)
 
