@@ -134,9 +134,10 @@ while True:
 							# signup_data=["sjhbd","asd@jk.lk","ahjdkhj"]
 							ws=wb.active
 							nth_row=ws.max_row+1
-							ws.cell(row=nth_row,column=1).value=signup_data[0].title()
-							# print(signup_data[0]," has been written")
-							ws.cell(row=nth_row,column=2).value=signup_data[1].lower()+"#"+signup_data[2]
+							if len(signup_data[0])>0 and len(signup_data[1]+signup_data[2])>0:
+								ws.cell(row=nth_row,column=1).value=signup_data[0].title()
+								# print(signup_data[0]," has been written")
+								ws.cell(row=nth_row,column=2).value=signup_data[1].lower()+"#"+signup_data[2]
 							# print(signup_data[1].lower()+"#"+signup_data[2]," has been written")
 							wb.save("backend\\login_data.xlsx")
 							print("Success: Signup data has been stored")
