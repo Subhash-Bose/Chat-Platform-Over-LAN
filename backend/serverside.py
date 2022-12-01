@@ -20,27 +20,14 @@ import tqdm
 SERVER = socket.gethostbyname(socket.gethostname())
 SERVER="172.16.185.40"
 PORT = 5000
-file1 = open("backend//myfile.txt", "w")
-L = ["chat histroy"]
-file1.writelines(L)
-file1.close()
 while True:
 	try:
-
-
-
-
-
-
 		recivingTheattecedfile=" "
 		def reciver(name,conn):
 			try:
 				print("recived file : ",name)
 				while True:
-					
 					try:
-
-						# client,addr=server.accept()
 						file_name=conn.recv(1024).decode(FORMAT)
 						print("Filename is",file_name)
 						print("waiting for file size")
@@ -49,11 +36,8 @@ while True:
 						print("and filesize",file_size)
 					except:
 						print("filename not recieved")
-					
-					# return
 
 					file=open(file_name,"wb")
-					
 					file_bytes=b""
 					done=False
 					print("File opened to write")
@@ -71,19 +55,13 @@ while True:
 
 					file.write(file_bytes)
 					file.close()
-					print("file downloaded")
 					break
 			except:
 				print("file not downloaded")
-		# An IPv4 address is obtained
-		# for the server.
 		SERVER = socket.gethostbyname(socket.gethostname())
-		# SERVER="172.16.185.40"
+		SERVER="172.16.185.40"
 		# Address is stored as a tuple
 		ADDRESS = (SERVER, PORT)
-
-		# the format in which encoding
-		# and decoding will occur
 		FORMAT = "utf-8"
 
 		clients, names = [], []
@@ -111,7 +89,7 @@ while True:
 				# and the address bound to it
 				conn, addr = server.accept()
 				# conn.send("NAME".encode(FORMAT))
-				clients.append(conn)
+				clients.append((conn))
 
 				# while True:
 				# 	msg conn.recv(1024).decode(FORMAT)
@@ -124,35 +102,6 @@ while True:
 				except:
 					pass
 					
-				# 1024 represents the max amount
-				# of data that can be received (bytes)
-				
-
-
-		# 		# append the name and client
-		# 		# to the respective list
-		# 		names.append(name)
-		# 		clients.append(conn)
-
-		# 		print(f"Name is :{name}")
-
-		# 		# broadcast message
-		# 		broadcastMessage(f"{name} has joined the chat!".encode(FORMAT))
-
-		# 		conn.send('Connection successful!'.encode(FORMAT))
-
-		# 		# Start the handling thread
-		# 		thread = threading.Thread(target=handle,
-		# 								args=(conn, addr))
-		# 		thread.start()
-
-		# 		# no. of clients connected
-		# 		# to the server
-		# 		print(f"active connections {threading.activeCount()-1}")
-
-		# # method to handle the
-		# # incoming messages
-
 		def login(conn,addr):
 			global otp
 			while True:
@@ -276,13 +225,10 @@ while True:
 				except:
 					print("Error : Authentication Error")
 
-
 		chat_msg=""
-		def handle(conn, addr):
+		def handle(conn, addr,nm):
 			
-			# send_thread= threading.Thread(target=sendMsg,args=(conn, addr))
-			recv_thread= threading.Thread(target=recvMsg,args=(conn, addr))
-			# send_thread.start()
+			recv_thread= threading.Thread(target=recvMsg,args=(conn, addr,nm))
 			recv_thread.start()
 
 		def recvMsg(conn,addr,nm):
@@ -301,8 +247,6 @@ while True:
 							recv_thread2= threading.Thread(target=reciver,args=("rohit",conn))
 							recv_thread2.start()
 							recv_thread2.join()
-						# continue
-							# reciver("rohit",conn)
 						except:
 							print("Error : Attachment recieved failed")
 						time.sleep(10)
@@ -337,21 +281,15 @@ while True:
 							# print("Error in cl")
 							return
 						return
-					# for client in clients:
-					# 	client.send(chat_msg.encode(FORMAT))
 					broadcastMessage(chat_msg)
 					# print("Sent msg is:",chat_msg)
 					# print("Recieved msg is:",chat_msg)
 				except:
-					pass
+					break
 		def broadcastMessage(message):
-				
 				for client in clients:
 					try:
 						client.send(message.encode(FORMAT))
-						file1 = open("backend//myfile.txt", "a")  # append mode
-						file1.write(message+"\n")
-						file1.close()
 					except:
 						# print("Connection not found")
 						pass

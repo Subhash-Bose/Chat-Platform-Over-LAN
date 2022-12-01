@@ -12,15 +12,18 @@ flag=1
 active_list=[]
 def chat(client,name,initiate):
     global flag
-    print("client is ",client,name,flag)
+    flag=1
+    # print("flag = ",flag)
+    # print("client is ",client,name,flag)
 
     def recvMsg(client):
         global flag
         # global chat_msg
+        flag=1
         while True:
             try:
                 if flag==0:
-                    print("recv closed")
+                    # print("recv closed")
                     return
                 # client.recv(chat_msg.decode(FORMAT))
                 # print("waiting for msg")
@@ -42,7 +45,7 @@ def chat(client,name,initiate):
                         formatted_text="{:<14} : {}\n".format(str("["+recieved_name1+"]"),recieved_msg)
 
                     textCons.insert(END,
-                        "{:<15} : {} \n\n".format(recieved_name1,recieved_msg))
+                        formatted_text)
                         
                     textCons.config(state=DISABLED)
                     textCons.see(END)
@@ -113,8 +116,7 @@ def chat(client,name,initiate):
 
     recv_thread=threading.Thread(target=recvMsg,args=(client,))
     recv_thread.start()
-    for thread in threading.enumerate(): 
-        print(thread.name)
+
     def btn_clicked():
         window.destroy()
         global flag
@@ -131,7 +133,7 @@ def chat(client,name,initiate):
     window.configure(bg = "#ffffff")
     canvas = Canvas(
         window,
-        bg = "#d1d1d1",
+        bg = "#f9f9f9",
         height = 600,
         width = 1000,
         bd = 0,
@@ -238,13 +240,13 @@ def chat(client,name,initiate):
         # print(str(file_size),"Sent")
         time.sleep(3)
 
+
         data=file.read()
         client.sendall(data)
         time.sleep(1)
         # print("file bits sent")
         client.send(b"<END>")
         file.close()
-        # client.close()
         return
             
         
@@ -279,11 +281,6 @@ def chat(client,name,initiate):
         width = 92,
         height = 39)
 
-    # entry1_img = PhotoImage(file = f"frontend\\chatWindow\\img_textBox1.png")
-    # entry1_bg = canvas.create_image(
-    #     474.0, 74.5,
-    #     image = entry1_img)
-
     entry1 = Label(window,
                         bg="white",
                         fg="black",
@@ -302,7 +299,7 @@ def chat(client,name,initiate):
                                 height=2,
                                 bg="#d1d1d1",
                                 fg="black",
-                                font="Helvetica 10",
+                                font="Helvetica 13",
                                 padx=5,
                                 pady=5)
 
@@ -336,17 +333,19 @@ def chat(client,name,initiate):
     scrollbar1.place(relheight=1,
                             relx=0.974)
     def threadTyping(client):
-        print("typing initiated")
+        # print("typing initiated")
         prevlen=0
         while True:
             if flag==0:
                 # print("typing closed")
                 return
             # print("Entry is",entry0.get())
+            # print("getting typed")
             currlen=len(entry0.get())
-            if prevlen!=currlen:
+            if prevlen!=currlen and currlen!=0:
                 # print(name ,"is typing")
                 client.send(str("type#"+str(name)).encode(FORMAT))
+                # print("typing signal sent")
                 prevlen=currlen
             time.sleep(0.7)
 
