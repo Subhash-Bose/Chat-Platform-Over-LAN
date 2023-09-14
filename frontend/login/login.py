@@ -1,112 +1,70 @@
-from tkinter import *
+import tkinter as tk
 
-
-def btn_clicked():
+def button_clicked():
     print("Button Clicked")
 
-
-window = Tk()
+window = tk.Tk()
 
 window.geometry("1000x600")
-window.configure(bg = "#ffffff")
-canvas = Canvas(
+window.configure(bg="#ffffff")
+
+canvas = tk.Canvas(
     window,
-    bg = "#ffffff",
-    height = 600,
-    width = 1000,
-    bd = 0,
-    highlightthickness = 0,
-    relief = "ridge")
-canvas.place(x = 0, y = 0)
+    bg="#ffffff",
+    height=600,
+    width=1000,
+    bd=0,
+    highlightthickness=0,
+    relief="ridge"
+)
+canvas.place(x=0, y=0)
 
-background_img = PhotoImage(file = f"background.png")
-background = canvas.create_image(
-    502.0, 294.0,
-    image=background_img)
+background_img = tk.PhotoImage(file="background.png")
+background = canvas.create_image(502.0, 294.0, image=background_img)
 
-entry0_img = PhotoImage(file = f"img_textBox0.png")
-entry0_bg = canvas.create_image(
-    558.5, 214.5,
-    image = entry0_img)
+entry_img = tk.PhotoImage(file="img_textBox0.png")
+entry_bg = canvas.create_image(558.5, 214.5, image=entry_img)
 
-entry0 = Entry(
-    bd = 0,
-    bg = "#eeecec",
-    highlightthickness = 0)
+entry = tk.Entry(
+    bd=0,
+    bg="#eeecec",
+    highlightthickness=0
+)
 
-entry0.place(
-    x = 366.0, y = 192,
-    width = 385.0,
-    height = 43)
+entry.place(x=366.0, y=192, width=385.0, height=43)
 
-entry1_img = PhotoImage(file = f"img_textBox1.png")
-entry1_bg = canvas.create_image(
-    558.5, 214.5,
-    image = entry1_img)
+img0 = tk.PhotoImage(file="img0.png")
+button0 = tk.Button(
+    image=img0,
+    borderwidth=0,
+    highlightthickness=0,
+    command=button_clicked,
+    relief="flat"
+)
 
-entry1 = Entry(
-    bd = 0,
-    bg = "#eeecec",
-    highlightthickness = 0)
+button0.place(x=346, y=445, width=191, height=18)
 
-entry1.place(
-    x = 366.0, y = 192,
-    width = 385.0,
-    height = 43)
+img1 = tk.PhotoImage(file="img1.png")
+button1 = tk.Button(
+    image=img1,
+    borderwidth=0,
+    highlightthickness=0,
+    command=button_clicked,
+    relief="flat"
+)
 
-entry2_img = PhotoImage(file = f"img_textBox2.png")
-entry2_bg = canvas.create_image(
-    565.5, 284.5,
-    image = entry2_img)
+button1.place(x=582, y=359, width=151, height=53)
 
-entry2 = Entry(
-    bd = 0,
-    bg = "#eeecec",
-    highlightthickness = 0)
+img2 = tk.PhotoImage(file="img2.png")
+button2 = tk.Button(
+    image=img2,
+    borderwidth=0,
+    highlightthickness=0,
+    command=button_clicked,
+    relief="flat"
+)
 
-entry2.place(
-    x = 373.0, y = 262,
-    width = 385.0,
-    height = 43)
-
-img0 = PhotoImage(file = f"img0.png")
-b0 = Button(
-    image = img0,
-    borderwidth = 0,
-    highlightthickness = 0,
-    command = btn_clicked,
-    relief = "flat")
-
-b0.place(
-    x = 346, y = 445,
-    width = 191,
-    height = 18)
-
-img1 = PhotoImage(file = f"img1.png")
-b1 = Button(
-    image = img1,
-    borderwidth = 0,
-    highlightthickness = 0,
-    command = btn_clicked,
-    relief = "flat")
-
-b1.place(
-    x = 582, y = 359,
-    width = 151,
-    height = 53)
-
-img2 = PhotoImage(file = f"img2.png")
-b2 = Button(
-    image = img2,
-    borderwidth = 0,
-    highlightthickness = 0,
-    command = btn_clicked,
-    relief = "flat")
-
-b2.place(
-    x = 397, y = 359,
-    width = 151,
-    height = 53)
+button2.place(x=397, y=359, width=151, height=53)
 
 window.resizable(False, False)
 window.mainloop()
